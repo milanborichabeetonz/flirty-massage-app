@@ -1,6 +1,5 @@
 import 'package:flirtymessages/core/widgets/pickup_line/pickup_line_card.dart';
 import 'package:flutter/material.dart';
-
 import '../../../core/widgets/header_icon_button.dart';
 import '../../favorite/favorite_screen.dart';
 import '../../premium/premium_screen.dart';
@@ -14,6 +13,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,7 +71,9 @@ class _HomeScreenState extends State<HomeScreen> {
                  SizedBox(
                    height: 200,
                      width: double.infinity,
-                     child: PickupLineCard()
+                     child: PickupLineCard(
+                         pickUpLine: ['Are you Wi-Fi? Because I feel a connection.']
+                     ) // pickup line
                  ),
               ],
           ),

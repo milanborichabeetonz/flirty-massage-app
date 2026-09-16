@@ -2,8 +2,17 @@ import 'package:flirtymessages/core/widgets/header_icon_button.dart';
 import 'package:flirtymessages/features/favorite/favorite_screen.dart';
 import 'package:flutter/material.dart';
 
+import '../../network/services/pickup_line_service.dart';
+
 class PickupLineCard extends StatelessWidget {
-  const PickupLineCard({super.key});
+
+  // final List<PickUpLineModel> pickUpLine;
+  final List pickUpLine;
+  final PickupLineService service = PickupLineService();
+
+  const PickupLineCard({super.key,
+        required this.pickUpLine,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -11,8 +20,14 @@ class PickupLineCard extends StatelessWidget {
       body: SizedBox(
         height: 200,
         width: double.infinity,
+        // ------------------------------------------------------------------------ PageView Builder ----------------------------------------------------
         child: PageView.builder(
+          itemCount: pickUpLine.length,
           itemBuilder: (context, index) {
+
+            // make variable for access pickUpLine list index vise
+            final item = pickUpLine[index];
+
             return Card(
               color: Colors.blue,
               child: Stack(
@@ -37,7 +52,7 @@ class PickupLineCard extends StatelessWidget {
                   // --------------------------------------- title -------------------------------------------
                   Center(
                     child: Text(
-                      "pickup Line of the day",
+
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
