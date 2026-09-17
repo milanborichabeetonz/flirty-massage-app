@@ -1,5 +1,9 @@
-import 'package:flirtymessages/core/widgets/pickup_line/pickup_line_card.dart';
 import 'package:flutter/material.dart';
+import '../../../core/constants/ai_wingman/ai_wingman_card.dart';
+import '../../../core/constants/category/all_category_tabs.dart';
+import '../../../core/constants/pickup_line/pickup_line_card.dart';
+import '../../../core/constants/quick_use_widget/quick_use_button.dart';
+import '../../../core/widgets/costume_text/costume_text_widget.dart';
 import '../../../core/widgets/header_icon_button.dart';
 import '../../favorite/favorite_screen.dart';
 import '../../premium/premium_screen.dart';
@@ -65,20 +69,51 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.all(2),
+          padding: EdgeInsets.all(10),
           child: Column(
             children: [
+                   // ------------------------------------------- PickupLineCard ----------------------------------------
                  SizedBox(
                    height: 200,
                      width: double.infinity,
-                     child: PickupLineCard(
-                         pickUpLine: ['Are you Wi-Fi? Because I feel a connection.']
-                     ) // pickup line
+                     child:
+                     PickupLineCard() // pickup line
                  ),
+                 SizedBox(height: 10,),
+                  //------------------------------------------ AiWingmanCard -------------------------------------------------------
+                  SizedBox(
+                    height: 150,
+                    width: double.infinity,
+                    child: AiWingmanCard(),
+                  ),
+                  //---------------------------------------------- Quick use --------------------------------------------
+              Container(
+                height: 150,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15)
+                ),
+                child: QuickUseButton(),
+              ),
+              //-------------------------------------------------------- Category -------------------------------------------
+              SizedBox(
+                width: double.infinity,
+                height: 40,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CostumeTextWidget(text: 'Category', color: Colors.black, size: 20,),
+                    IconButton(onPressed: (){}, icon: Icon(Icons.search_rounded))
+                  ],
+                ),
+              ),
+              // --------------------------------------  show all  category ------------------------------------
+              Expanded(child: AllCategoryTabs())
               ],
           ),
         ),
       ),
+      floatingActionButton: FloatingActionButton(onPressed: (){},child: Icon(Icons.edit_note),),
     );
   }
 }
