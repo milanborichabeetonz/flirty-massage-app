@@ -169,23 +169,3 @@ class _PickupLineCardState extends State<PickupLineCard> {
   }
 }
 
-//SizedBox(
-// height: 150,
-// child: GridView.builder(
-// scrollDirection: Axis.horizontal,
-// itemCount: 10,
-// gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-// crossAxisCount: 2,
-// crossAxisSpacing: 10,
-// mainAxisSpacing: 10,
-// childAspectRatio: 1,
-// ),
-// itemBuilder: (context, index) {
-// return Card(
-// child: Center(
-// child: Text("Item $index"),
-// ),
-// );
-// },
-// ),
-//

@@ -1,5 +1,5 @@
-import 'package:flirtymessages/features/favorite/favorite_screen.dart';
 import 'package:flutter/material.dart';
+import '../../../features/ai_wingman/wingman_screen.dart';
 import '../../widgets/costume_text/costume_text_widget.dart';
 
 class AiWingmanCard extends StatefulWidget {
@@ -18,7 +18,7 @@ class _AiWingmanCardState extends State<AiWingmanCard> {
         width: double.infinity,
         child: GestureDetector(
           onTap: (){
-            Navigator.push(context, MaterialPageRoute(builder: (context) => FavoriteScreen()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => WingmanScreen()));
           },
           child: Card(
             color: Colors.pink.withOpacity(0.2),
