@@ -37,7 +37,7 @@ class QuickUseButton extends StatelessWidget {
                           color: Colors.black,
                           size: 12,
                         ),
-                        SizedBox(width: 50,),
+                        SizedBox(width: 40,),
                         Icon(Icons.chevron_right)
                       ],
                     )
@@ -64,7 +64,7 @@ class QuickUseButton extends StatelessWidget {
                           color: Colors.black,
                           size: 12,
                         ),
-                        SizedBox(width: 50,),
+                        SizedBox(width: 40,),
                         Icon(Icons.chevron_right)
                       ],
                     )

@@ -26,22 +26,21 @@ class _AiWingmanCardState extends State<AiWingmanCard> {
               children: [
                  Padding(
                    padding: const EdgeInsets.only(top: 5, left: 5),
-                   child: Flexible(
-                     child: Container(
-                       decoration: BoxDecoration(
-                         borderRadius: BorderRadius.circular(15),
-                         color: Colors.white.withOpacity(0.4),
-                         border: Border.all(
-                           width: 1,
-                           color: Colors.white,
-                         )
+                   child: Container(
+                     decoration: BoxDecoration(
+                       borderRadius: BorderRadius.circular(15),
+                       color: Colors.white.withOpacity(0.4),
+                       border: Border.all(
+                         width: 1,
+                         color: Colors.white,
                        ),
-                       // ----------------------------------------------- New AI WINGMAN -----------------------------------------------
-                       child: Padding(
-                         padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                         child: Text("New AI WINGMAN",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),
-                         ),
-                       // ------------------------------------- stuck on what to say ---------------------------------
+                     ),
+                     // ----------------------------------------------- New AI WINGMAN -----------------------------------------------
+                     child: const Padding(
+                       padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                       child: Text(
+                         "New AI WINGMAN",
+                         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                        ),
                      ),
                    ),

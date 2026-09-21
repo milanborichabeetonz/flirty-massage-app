@@ -44,9 +44,9 @@ class _AllCategoryTabsState extends State<AllCategoryTabs> {
             itemCount: categories.length,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-              childAspectRatio: 1,
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 2,
+              childAspectRatio: 0.75,
             ),
             itemBuilder: (context, index) {
               final category = categories[index];
@@ -54,29 +54,27 @@ class _AllCategoryTabsState extends State<AllCategoryTabs> {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(
-                    height: 80,
-                    width: 80,
+                  Expanded(
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(15),
                       child: Card(
                         child: Image.network(
-                          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAVh_SzZagcktIZmB1JLb5Ez5t-s_uRcH5kw45kfcdNA&s',
+                          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSR-zKqJ2lQvA78r2LN42PqAMHvyefdpXowu6QO-CcheQ&s=10',
                           fit: BoxFit.cover,
                         ),
                       ),
                     ),
                   ),
 
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 4),
 
                   CostumeTextWidget(
                     text: category.category,
                     color: Colors.black,
-                    size: 12,
+                    size: 10,
                     fontWeight: FontWeight.normal,
                   ),
-                ],
+                ]
               );
             },
           );

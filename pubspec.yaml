@@ -33,3 +33,44 @@ flutter:
     - assets/images/
 
     - .env
+
+  fonts:
+    - family: Anton
+      fonts:
+        - asset: assets/fonts/Anton-Regular.ttf
+
+    - family: BebasNeue
+      fonts:
+      - asset: assets/fonts/BebasNeue-Regular.ttf
+
+    - family: BlackOpsOne
+      fonts:
+        - asset: assets/fonts/BlackOpsOne-Regularr.ttf
+
+    - family: CinzelDecorative
+      fonts:
+        - asset: assets/fonts/CinzelDecorative-Regular.ttf
+    - family: LobsterTwo
+      fonts:
+        - asset: assets/fonts/LobsterTwo-Regular.ttf
+
+    - family: MonsieurLaDoulaise
+      fonts:
+        - asset: assets/fonts/MonsieurLaDoulaise-Regular.ttf
+
+    - family: PlayfairDisplay
+      fonts:
+        - asset: assets/fonts/PlayfairDisplay-VariableFont_wght.ttf
+
+    - family: PlaywriteCUGuides
+      fonts:
+        - asset: assets/fonts/PlaywriteCUGuides-Regular.ttf
+
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/Roboto-VariableFont_wdth,wght.ttf
+
+    - family: SmoochSans
+      fonts:
+        - asset: assets/fonts/SmoochSans-VariableFont_wght.ttf
+

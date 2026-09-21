@@ -6,6 +6,7 @@ import '../../../core/constants/quick_use_widget/quick_use_button.dart';
 import '../../../core/widgets/costume_text/costume_text_widget.dart';
 import '../../../core/widgets/header_icon_button.dart';
 import '../../favorite/favorite_screen.dart';
+import '../../pickup_line/pickup_line_maker_screen.dart';
 import '../../premium/premium_screen.dart';
 import '../../setting/setting_screen.dart';
 
@@ -113,7 +114,9 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(onPressed: (){},child: Icon(Icons.edit_note),),
+      floatingActionButton: FloatingActionButton(onPressed: (){
+        Navigator.push(context, MaterialPageRoute(builder: (context) => PickupLineMakerScreen()));
+      },child: Icon(Icons.edit_note),),
     );
   }
 }

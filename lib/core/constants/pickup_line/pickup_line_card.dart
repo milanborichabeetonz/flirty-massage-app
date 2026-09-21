@@ -156,7 +156,7 @@ class _PickupLineCardState extends State<PickupLineCard> {
                 viewportFraction: 0.85,
                // enlargeCenterPage: true,
                 autoPlay: true,
-                autoPlayInterval: const Duration(seconds: 4),
+                autoPlayInterval: const Duration(seconds: 6),
                 autoPlayAnimationDuration: const Duration(
                   milliseconds: 800,
                 ),
