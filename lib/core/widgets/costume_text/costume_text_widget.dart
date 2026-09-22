@@ -6,6 +6,7 @@ class CostumeTextWidget extends StatelessWidget {
   final EdgeInsets padding;
   final double size;
   final FontWeight? fontWeight;
+   final String? fontFamily;
 
   const CostumeTextWidget({
     super.key,
@@ -14,6 +15,7 @@ class CostumeTextWidget extends StatelessWidget {
     required this.size,
     this.padding = EdgeInsets.zero,
     this.fontWeight,
+    this.fontFamily,
   });
 
   @override
@@ -22,7 +24,7 @@ class CostumeTextWidget extends StatelessWidget {
       padding: padding,
       child: Text(
         text,
-        style: TextStyle(color: color, fontSize: size, fontWeight: fontWeight),
+        style: TextStyle(color: color, fontSize: size, fontWeight: fontWeight, fontFamily: fontFamily),
       ),
     );
   }
