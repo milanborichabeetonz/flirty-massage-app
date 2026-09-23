@@ -1,7 +1,14 @@
+import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+
 import 'package:flirtymessages/core/widgets/costume_text/costume_text_widget.dart';
 import 'package:flirtymessages/core/widgets/custom_button_widget.dart';
 import 'package:flirtymessages/core/widgets/edit_text_botton_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../core/constants/line_text_maker_widget/pickup_line_preview_widget.dart';
 
@@ -13,12 +20,19 @@ class PickupLineMakerScreen extends StatefulWidget {
 }
 
 class _PickupLineMakerScreenState extends State<PickupLineMakerScreen> {
-  /// ====================
-  ///  for text size ----------------------------------------------------------------------------
-  /// ====================
+  // ====================
+  //  Preview key for screenshot
+  // ====================
+  final GlobalKey _previewKey = GlobalKey();
 
+  // ====================
+  //  Text controller
+  // ====================
   final TextEditingController _textController = TextEditingController();
 
+  // ====================
+  //  Text styling
+  // ====================
   double fontSize = 25;
   double vSpacing = 0.0;
   double textSpacing = 0.0;
@@ -28,7 +42,364 @@ class _PickupLineMakerScreenState extends State<PickupLineMakerScreen> {
   TextAlign textAlign = TextAlign.center;
   int textCaseIndex = 0;
 
-  // Pickup Line Text Size Bottom sheet---------------------------------------------------------------
+  // ====================
+  //  Background
+  // ====================
+  Color selectedColor = Colors.white;
+  Gradient? selectedGradient;
+  File? selectedGalleryImage;
+  String? selectedBackgroundImagePath;
+
+  // ====================
+  //  Font
+  // ====================
+  String selectedFontFamily = 'Roboto';
+
+  // ====================
+  //  Text color
+  // ====================
+  Color isSelectedTextColor = Colors.black;
+
+  // ====================
+  //  Border
+  // ====================
+  bool hasBorder = false;
+  Color borderColor = Colors.transparent;
+  double borderWidth = 3.0;
+
+  // ====================
+  //  Shadow
+  // ====================
+  bool hasShadow = false;
+  Color selectedShadowColor = Colors.black;
+  double shadowOffsetX = 2.0;
+  double shadowOffsetY = 2.0;
+  double shadowBlur = 8.0;
+
+  // ====================
+  //  Opacity
+  // ====================
+  double selectedOpacity = 1.0;
+
+  // ====================
+  //  Padding (4 independent)
+  // ====================
+  double topPadding = 20.0;
+  double bottomPadding = 20.0;
+  double leftPadding = 20.0;
+  double rightPadding = 20.0;
+
+  // ====================
+  //  Color lists
+  // ====================
+  final List<Color> bgColor = [
+    Colors.white,
+    Colors.pink.shade100,
+    Colors.purple.shade100,
+    Colors.blue.shade100,
+    Colors.green.shade100,
+    Colors.amber.shade100,
+    Colors.red.shade100,
+    Colors.teal.shade100,
+    Colors.black87,
+  ];
+
+  final List<Color> textColor = [
+    Colors.white,
+    Colors.black,
+    Colors.pink.shade100,
+    Colors.purple.shade100,
+    Colors.blue.shade100,
+    Colors.green.shade100,
+    Colors.amber.shade100,
+    Colors.red.shade100,
+    Colors.teal.shade100,
+    Colors.black87,
+  ];
+
+  final List<Color> borderColorList = [
+    Colors.yellow,
+    Colors.purple,
+    Colors.red,
+    Colors.green,
+    Colors.indigo,
+    Colors.blueGrey,
+    Colors.blue,
+    Colors.deepPurple,
+    Colors.pink,
+    Colors.black,
+    Colors.white,
+  ];
+
+  final List<LinearGradient> gradientList = [
+    const LinearGradient(colors: [Colors.pink, Colors.purple]),
+    const LinearGradient(colors: [Colors.blue, Colors.cyan]),
+    const LinearGradient(colors: [Colors.orange, Colors.red]),
+    const LinearGradient(colors: [Colors.green, Colors.teal]),
+    const LinearGradient(colors: [Colors.indigo, Colors.purple]),
+    const LinearGradient(colors: [Colors.pinkAccent, Colors.orange]),
+    const LinearGradient(colors: [Colors.deepPurple, Colors.blue]),
+    const LinearGradient(colors: [Colors.redAccent, Colors.pink]),
+    const LinearGradient(colors: [Colors.cyan, Colors.green]),
+    const LinearGradient(colors: [Colors.amber, Colors.orange]),
+    const LinearGradient(colors: [Colors.blueAccent, Colors.indigo]),
+    const LinearGradient(colors: [Colors.purpleAccent, Colors.pinkAccent]),
+  ];
+
+  /// Preset gradient placeholders (no asset images available)
+  final List<LinearGradient> presetPlaceholders = [
+    const LinearGradient(
+        colors: [Color(0xFFf8b4c8), Color(0xFFd88ae5)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight),
+    const LinearGradient(
+        colors: [Color(0xFF84c5f4), Color(0xFF5e9cf3)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight),
+    const LinearGradient(
+        colors: [Color(0xFFffd580), Color(0xFFff9f43)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight),
+    const LinearGradient(
+        colors: [Color(0xFF55efc4), Color(0xFF00b894)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight),
+    const LinearGradient(
+        colors: [Color(0xFFfd79a8), Color(0xFFe84393)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight),
+    const LinearGradient(
+        colors: [Color(0xFFa29bfe), Color(0xFF6c5ce7)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight),
+  ];
+
+  // ============================================================
+  //  A. BACKGROUND BOTTOM SHEET
+  // ============================================================
+  void _openBackgroundBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setSheetState) {
+            return Container(
+              height: 480,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Header
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Icon(Icons.close, size: 28),
+                      ),
+                      const Text(
+                        "Background",
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Icon(Icons.check, size: 28),
+                      ),
+                    ],
+                  ),
+
+                  // Section 1 — Color row
+                  const Padding(
+                    padding: EdgeInsets.only(left: 16, bottom: 6),
+                    child: Text("Colors",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600, fontSize: 13)),
+                  ),
+                  SizedBox(
+                    height: 54,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      itemCount: bgColor.length,
+                      itemBuilder: (context, index) {
+                        final color = bgColor[index];
+                        final isSelected = selectedGalleryImage == null &&
+                            selectedBackgroundImagePath == null &&
+                            selectedGradient == null &&
+                            selectedColor == color;
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedColor = color;
+                              selectedGradient = null;
+                              selectedGalleryImage = null;
+                              selectedBackgroundImagePath = null;
+                            });
+                            setSheetState(() {});
+                            Navigator.pop(context);
+                          },
+                          child: Container(
+                            width: 46,
+                            height: 46,
+                            margin: const EdgeInsets.symmetric(horizontal: 5),
+                            decoration: BoxDecoration(
+                              color: color,
+                              shape: BoxShape.circle,
+                              border: isSelected
+                                  ? Border.all(
+                                      color: Colors.deepPurple, width: 3)
+                                  : Border.all(
+                                      color: Colors.grey.shade300, width: 1),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  // Section 2 — Action buttons
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      children: [
+                        // Choose Photo
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            icon: const Icon(Icons.photo_library_outlined,
+                                size: 20),
+                            label: const Text("Choose Photo"),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: Colors.deepPurple,
+                              side: const BorderSide(
+                                  color: Colors.deepPurple, width: 1.5),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12)),
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 12),
+                            ),
+                            onPressed: () async {
+                              final ImagePicker picker = ImagePicker();
+                              final XFile? picked = await picker.pickImage(
+                                  source: ImageSource.gallery);
+                              if (picked != null) {
+                                setState(() {
+                                  selectedGalleryImage = File(picked.path);
+                                  selectedGradient = null;
+                                  selectedBackgroundImagePath = null;
+                                });
+                                if (context.mounted) {
+                                  Navigator.pop(context);
+                                }
+                              }
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        // Remove Background
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            icon: const Icon(Icons.format_color_reset_outlined,
+                                size: 20),
+                            label: const Text("Remove BG"),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: Colors.redAccent,
+                              side: const BorderSide(
+                                  color: Colors.redAccent, width: 1.5),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12)),
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 12),
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                selectedColor = Colors.white;
+                                selectedGradient = null;
+                                selectedGalleryImage = null;
+                                selectedBackgroundImagePath = null;
+                              });
+                              setSheetState(() {});
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // Section 3 — Preset placeholders grid
+                  const Padding(
+                    padding: EdgeInsets.only(left: 16, bottom: 6),
+                    child: Text("Presets",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600, fontSize: 13)),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: GridView.builder(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                          childAspectRatio: 1.6,
+                        ),
+                        itemCount: presetPlaceholders.length,
+                        itemBuilder: (context, index) {
+                          final gradient = presetPlaceholders[index];
+                          final isSelected =
+                              selectedBackgroundImagePath == 'preset_$index';
+                          return GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                // Use gradient as preset background
+                                selectedGradient = gradient;
+                                selectedColor = Colors.white;
+                                selectedGalleryImage = null;
+                                selectedBackgroundImagePath = 'preset_$index';
+                              });
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                gradient: gradient,
+                                borderRadius: BorderRadius.circular(12),
+                                border: isSelected
+                                    ? Border.all(
+                                        color: Colors.deepPurple, width: 3)
+                                    : null,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  // ============================================================
+  //  TEXT SIZE BOTTOM SHEET (unchanged logic)
+  // ============================================================
   void _openTextSizeBottomSheet() {
     showModalBottomSheet(
       context: context,
@@ -37,7 +408,7 @@ class _PickupLineMakerScreenState extends State<PickupLineMakerScreen> {
           builder: (context, setSheetState) {
             return Container(
               height: 380,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 borderRadius: BorderRadius.only(
                   topRight: Radius.circular(40),
                   topLeft: Radius.circular(40),
@@ -51,8 +422,8 @@ class _PickupLineMakerScreenState extends State<PickupLineMakerScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       TextButton(
-                        onPressed: () {},
-                        child: Icon(Icons.close, size: 30),
+                        onPressed: () => Navigator.pop(context),
+                        child: const Icon(Icons.close, size: 30),
                       ),
                       CostumeTextWidget(
                         text: "Text Size",
@@ -60,24 +431,22 @@ class _PickupLineMakerScreenState extends State<PickupLineMakerScreen> {
                         size: 15,
                       ),
                       TextButton(
-                        onPressed: () {},
-                        child: Icon(Icons.check, size: 30),
+                        onPressed: () => Navigator.pop(context),
+                        child: const Icon(Icons.check, size: 30),
                       ),
                     ],
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Icon(Icons.text_fields, size: 30),
+                      const Icon(Icons.text_fields, size: 30),
                       Slider(
                         value: fontSize,
                         min: 12,
                         max: 60,
                         onChanged: (value) {
-                          setState(() {
-                            fontSize = value;
-                          });
+                          setState(() => fontSize = value);
                           setSheetState(() {});
                         },
                       ),
@@ -88,19 +457,17 @@ class _PickupLineMakerScreenState extends State<PickupLineMakerScreen> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Icon(Icons.format_line_spacing, size: 30),
+                      const Icon(Icons.format_line_spacing, size: 30),
                       Slider(
                         value: vSpacing,
                         min: 0.0,
                         max: 4,
                         onChanged: (value) {
-                          setState(() {
-                            vSpacing = value;
-                          });
+                          setState(() => vSpacing = value);
                           setSheetState(() {});
                         },
                       ),
@@ -111,19 +478,17 @@ class _PickupLineMakerScreenState extends State<PickupLineMakerScreen> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Icon(Icons.space_bar, size: 30),
+                      const Icon(Icons.space_bar, size: 30),
                       Slider(
                         value: textSpacing,
                         min: 0,
                         max: 80,
                         onChanged: (value) {
-                          setState(() {
-                            textSpacing = value;
-                          });
+                          setState(() => textSpacing = value);
                           setSheetState(() {});
                         },
                       ),
@@ -139,14 +504,11 @@ class _PickupLineMakerScreenState extends State<PickupLineMakerScreen> {
                     children: [
                       CustomButtonWidget(
                         onPressed: () {
-                          setState(() {
-                            isBold = !isBold;
-                          });
+                          setState(() => isBold = !isBold);
                           setSheetState(() {});
                         },
-                        backgroundColor: isBold
-                            ? Colors.deepPurple
-                            : Colors.grey.shade200,
+                        backgroundColor:
+                            isBold ? Colors.deepPurple : Colors.grey.shade200,
                         child: Icon(
                           Icons.format_bold,
                           color: isBold ? Colors.white : Colors.black87,
@@ -154,24 +516,19 @@ class _PickupLineMakerScreenState extends State<PickupLineMakerScreen> {
                       ),
                       CustomButtonWidget(
                         onPressed: () {
-                          setState(() {
-                            isItalic = !isItalic;
-                          });
+                          setState(() => isItalic = !isItalic);
                           setSheetState(() {});
                         },
-                        backgroundColor: isItalic
-                            ? Colors.deepPurple
-                            : Colors.grey.shade200,
+                        backgroundColor:
+                            isItalic ? Colors.deepPurple : Colors.grey.shade200,
                         child: Icon(
                           Icons.format_italic,
-                          color: isBold ? Colors.white : Colors.black87,
+                          color: isItalic ? Colors.white : Colors.black87,
                         ),
                       ),
                       CustomButtonWidget(
                         onPressed: () {
-                          setState(() {
-                            isUnderline = !isUnderline;
-                          });
+                          setState(() => isUnderline = !isUnderline);
                           setSheetState(() {});
                         },
                         backgroundColor: isUnderline
@@ -179,26 +536,22 @@ class _PickupLineMakerScreenState extends State<PickupLineMakerScreen> {
                             : Colors.grey.shade200,
                         child: Icon(
                           Icons.format_underline,
-                          color: isBold ? Colors.white : Colors.black87,
+                          color: isUnderline ? Colors.white : Colors.black87,
                         ),
                       ),
                       CustomButtonWidget(
                         onPressed: () {
                           setState(() {
-                            textCaseIndex =
-                                (textCaseIndex + 1) %
-                                3; // 0: normal, 1: UPPER, 2: lower
+                            textCaseIndex = (textCaseIndex + 1) % 3;
                           });
-
                           final currentText = _textController.text;
                           if (textCaseIndex == 1) {
                             _textController.text = currentText.toUpperCase();
                           } else if (textCaseIndex == 2) {
                             _textController.text = currentText.toLowerCase();
                           }
-
-                          _textController
-                              .selection = TextSelection.fromPosition(
+                          _textController.selection =
+                              TextSelection.fromPosition(
                             TextPosition(offset: _textController.text.length),
                           );
                           setSheetState(() {});
@@ -206,13 +559,14 @@ class _PickupLineMakerScreenState extends State<PickupLineMakerScreen> {
                         backgroundColor: textCaseIndex != 0
                             ? Colors.deepPurple
                             : Colors.grey.shade200,
-                        child: Icon(Icons.abc, color: Colors.black87),
+                        child:
+                            const Icon(Icons.abc, color: Colors.black87),
                       ),
                       CustomButtonWidget(
                         onPressed: () {
                           setState(() {
                             if (textAlign == TextAlign.center) {
-                              textAlign = TextAlign.left; // single = assignment
+                              textAlign = TextAlign.left;
                             } else if (textAlign == TextAlign.left) {
                               textAlign = TextAlign.right;
                             } else {
@@ -224,7 +578,7 @@ class _PickupLineMakerScreenState extends State<PickupLineMakerScreen> {
                         backgroundColor: textAlign != TextAlign.center
                             ? Colors.deepPurple
                             : Colors.grey.shade200,
-                        child: Icon(
+                        child: const Icon(
                           Icons.format_align_center,
                           color: Colors.black87,
                         ),
@@ -240,84 +594,9 @@ class _PickupLineMakerScreenState extends State<PickupLineMakerScreen> {
     );
   }
 
-  ///==============================
-  // for TEXT background Color------------------------------------------------------------------------
-  ///=============================
-  Color selectedColor = Colors.white;
-
-  final List<Color> bgColor = [
-    Colors.white,
-    Colors.white,
-    Colors.pink.shade100,
-    Colors.purple.shade100,
-    Colors.blue.shade100,
-    Colors.green.shade100,
-    Colors.amber.shade100,
-    Colors.red.shade100,
-    Colors.teal.shade100,
-    Colors.black87,
-  ];
-
-  // pickup Line Background Bottom sheet--------------------------------------------------------------
-  void _openBackgroundBottomSheet() {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: SizedBox(
-            height: 500,
-            width: double.infinity,
-            child: Column(
-              children: [
-                // Text
-                CostumeTextWidget(
-                  text: "choose Background",
-                  color: Colors.black,
-                  size: 15,
-                ),
-                const SizedBox(height: 15),
-                // colors option
-                Expanded(
-                  child: GridView.builder(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 4,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                    ),
-                    itemCount: bgColor.length,
-                    itemBuilder: (context, index) {
-                      final color = bgColor[index];
-                      return GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            selectedColor = color;
-                          });
-                          Navigator.pop(context);
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: color,
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  /// =========================================
-  // ----------- for font family ---------------
-  /// =========================================
-  String selectedFontFamily = 'Roboto';
-
+  // ============================================================
+  //  FONT FAMILY BOTTOM SHEET (unchanged)
+  // ============================================================
   final List<String> fontFamilyList = [
     'Roboto',
     'Anton',
@@ -331,14 +610,13 @@ class _PickupLineMakerScreenState extends State<PickupLineMakerScreen> {
     'SmoochSans',
   ];
 
-  //Pickup Line FontFamily Bottom sheet -------------------------------------------------------------
   void _openFontFamilyBottomSheet() {
     showModalBottomSheet(
       context: context,
       builder: (context) {
         return Container(
           height: 400,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             borderRadius: BorderRadius.only(
               topRight: Radius.circular(40),
               topLeft: Radius.circular(40),
@@ -352,8 +630,8 @@ class _PickupLineMakerScreenState extends State<PickupLineMakerScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     TextButton(
-                      onPressed: () {},
-                      child: Icon(Icons.close, size: 30),
+                      onPressed: () => Navigator.pop(context),
+                      child: const Icon(Icons.close, size: 30),
                     ),
                     CostumeTextWidget(
                       text: "Choose Font Style",
@@ -362,15 +640,16 @@ class _PickupLineMakerScreenState extends State<PickupLineMakerScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                     TextButton(
-                      onPressed: () {},
-                      child: Icon(Icons.check, size: 30),
+                      onPressed: () => Navigator.pop(context),
+                      child: const Icon(Icons.check, size: 30),
                     ),
                   ],
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Expanded(
                   child: GridView.builder(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       crossAxisSpacing: 10,
                       childAspectRatio: 1,
@@ -379,12 +658,10 @@ class _PickupLineMakerScreenState extends State<PickupLineMakerScreen> {
                     itemCount: fontFamilyList.length,
                     itemBuilder: (context, index) {
                       final fonts = fontFamilyList[index];
-                      final isSelectedFonts = selectedFontFamily == fonts;
                       return GestureDetector(
                         onTap: () {
-                          setState(() {
-                            selectedFontFamily = fonts;
-                          });
+                          setState(() => selectedFontFamily = fonts);
+                          Navigator.pop(context);
                         },
                         child: Card(
                           child: Center(
@@ -408,33 +685,16 @@ class _PickupLineMakerScreenState extends State<PickupLineMakerScreen> {
     );
   }
 
-  ///================================
-  /// pickUp line Text Color
-  /// =============================
-
-  //selected textColor
-  Color isSelectedTextColor = Colors.black;
-
-  final List<Color> textColor = [
-    Colors.white,
-    Colors.white,
-    Colors.pink.shade100,
-    Colors.purple.shade100,
-    Colors.blue.shade100,
-    Colors.green.shade100,
-    Colors.amber.shade100,
-    Colors.red.shade100,
-    Colors.teal.shade100,
-    Colors.black87,
-  ];
-
+  // ============================================================
+  //  TEXT COLOR BOTTOM SHEET (unchanged)
+  // ============================================================
   void _openTextColorBottomSheet() {
     showModalBottomSheet(
       context: context,
       builder: (context) {
         return Container(
           height: 300,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             borderRadius: BorderRadius.only(
               topRight: Radius.circular(40),
               topLeft: Radius.circular(40),
@@ -448,8 +708,8 @@ class _PickupLineMakerScreenState extends State<PickupLineMakerScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     TextButton(
-                      onPressed: () {},
-                      child: Icon(Icons.close, size: 30),
+                      onPressed: () => Navigator.pop(context),
+                      child: const Icon(Icons.close, size: 30),
                     ),
                     CostumeTextWidget(
                       text: "Choose Text Color",
@@ -458,41 +718,46 @@ class _PickupLineMakerScreenState extends State<PickupLineMakerScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                     TextButton(
-                      onPressed: () {},
-                      child: Icon(Icons.check, size: 30),
+                      onPressed: () => Navigator.pop(context),
+                      child: const Icon(Icons.check, size: 30),
                     ),
                   ],
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Expanded(
                   child: GridView.builder(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 4,
                       mainAxisSpacing: 10,
                       childAspectRatio: 1,
                       crossAxisSpacing: 10,
                     ),
                     itemCount: textColor.length,
-                    itemBuilder: ((context, index) {
+                    itemBuilder: (context, index) {
                       final color = textColor[index];
                       final isSelected = isSelectedTextColor == color;
                       return GestureDetector(
                         onTap: () {
-                          setState(() {
-                            isSelectedTextColor = color;
-                          });
+                          setState(() => isSelectedTextColor = color);
+                          Navigator.pop(context);
                         },
                         child: Container(
                           decoration: BoxDecoration(
                             color: color,
                             borderRadius: BorderRadius.circular(50),
+                            border: isSelected
+                                ? Border.all(
+                                    color: Colors.deepPurple, width: 3)
+                                : Border.all(
+                                    color: Colors.grey.shade300, width: 1),
                           ),
                         ),
                       );
-                    }),
+                    },
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
               ],
             ),
           ),
@@ -501,28 +766,9 @@ class _PickupLineMakerScreenState extends State<PickupLineMakerScreen> {
     );
   }
 
-  ///================================
-  /// text border  Color---------------------------------------------------------------
-  /// ===============================
-
-  bool hasBorder = false;
-  Color borderColor = Colors.transparent;
-  double borderWidth = 3.0;
-
-  final List<Color> borderColorList = [
-    Colors.yellow,
-    Colors.purple,
-    Colors.red,
-    Colors.green,
-    Colors.indigo,
-    Colors.blueGrey,
-    Colors.blue,
-    Colors.deepPurple,
-    Colors.pink,
-    Colors.black,
-    Colors.white,
-  ];
-
+  // ============================================================
+  //  B. BORDER BOTTOM SHEET (unchanged)
+  // ============================================================
   void _openBorderBottomSheet() {
     showModalBottomSheet(
       context: context,
@@ -531,7 +777,7 @@ class _PickupLineMakerScreenState extends State<PickupLineMakerScreen> {
           builder: (context, setSheetState) {
             return Container(
               height: 220,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(30),
@@ -540,36 +786,37 @@ class _PickupLineMakerScreenState extends State<PickupLineMakerScreen> {
               ),
               child: Column(
                 children: [
-                  // --- Header Row ---
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       TextButton(
                         onPressed: () => Navigator.pop(context),
-                        child: Icon(Icons.close, size: 28),
+                        child: const Icon(Icons.close, size: 28),
                       ),
-                      Text("Text Border",
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                      const Text(
+                        "Text Border",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       TextButton(
                         onPressed: () {
                           setState(() {});
                           Navigator.pop(context);
                         },
-                        child: Icon(Icons.check, size: 28),
+                        child: const Icon(Icons.check, size: 28),
                       ),
                     ],
                   ),
-
-                  // --- Color Picker Row ---
                   SizedBox(
                     height: 55,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      itemCount: borderColorList.length + 1, // +1 for eyedropper
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      itemCount: borderColorList.length + 1,
                       itemBuilder: (context, index) {
                         if (index == 0) {
-                          // Eyedropper / No Border button
                           return GestureDetector(
                             onTap: () {
                               setState(() => hasBorder = false);
@@ -578,12 +825,13 @@ class _PickupLineMakerScreenState extends State<PickupLineMakerScreen> {
                             child: Container(
                               width: 45,
                               height: 45,
-                              margin: EdgeInsets.symmetric(horizontal: 5),
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 5),
                               decoration: BoxDecoration(
                                 color: Colors.grey.shade200,
                                 shape: BoxShape.circle,
                               ),
-                              child: Icon(Icons.colorize, size: 22),
+                              child: const Icon(Icons.colorize, size: 22),
                             ),
                           );
                         }
@@ -600,7 +848,8 @@ class _PickupLineMakerScreenState extends State<PickupLineMakerScreen> {
                           child: Container(
                             width: 45,
                             height: 45,
-                            margin: EdgeInsets.symmetric(horizontal: 5),
+                            margin:
+                                const EdgeInsets.symmetric(horizontal: 5),
                             decoration: BoxDecoration(
                               color: color,
                               shape: BoxShape.circle,
@@ -613,14 +862,11 @@ class _PickupLineMakerScreenState extends State<PickupLineMakerScreen> {
                       },
                     ),
                   ),
-
-                  SizedBox(height: 10),
-
-                  // --- Width Slider Row ---
+                  const SizedBox(height: 10),
                   Row(
                     children: [
-                      SizedBox(width: 10),
-                      Icon(Icons.water_drop_outlined, size: 28),
+                      const SizedBox(width: 10),
+                      const Icon(Icons.water_drop_outlined, size: 28),
                       Expanded(
                         child: Slider(
                           value: borderWidth,
@@ -635,9 +881,10 @@ class _PickupLineMakerScreenState extends State<PickupLineMakerScreen> {
                       ),
                       Text(
                         borderWidth.toInt().toString(),
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style:
+                            const TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      SizedBox(width: 15),
+                      const SizedBox(width: 15),
                     ],
                   ),
                 ],
@@ -649,63 +896,226 @@ class _PickupLineMakerScreenState extends State<PickupLineMakerScreen> {
     );
   }
 
-  ///================================
-  /// shadow --------------------------------
-  /// ==================================
+  // ============================================================
+  //  SHADOW BOTTOM SHEET (unchanged)
+  // ============================================================
   void _openShadowBottomSheet() {
     showModalBottomSheet(
       context: context,
       builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setSheetState) {
+            return SizedBox(
+              height: 290,
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      IconButton(
+                        onPressed: () => Navigator.pop(context),
+                        icon: const Icon(Icons.close, size: 30),
+                      ),
+                      const Text(
+                        "Shadow",
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          setState(() {});
+                          Navigator.pop(context);
+                        },
+                        icon: const Icon(Icons.check, size: 30),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      const SizedBox(width: 12),
+                      const Text("X",
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      Expanded(
+                        child: Slider(
+                          value: shadowOffsetX,
+                          min: -20.0,
+                          max: 20.0,
+                          activeColor: Colors.deepPurple,
+                          onChanged: (value) {
+                            setState(() => shadowOffsetX = value);
+                            setSheetState(() {});
+                          },
+                        ),
+                      ),
+                      const Text("Y",
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      Expanded(
+                        child: Slider(
+                          value: shadowOffsetY,
+                          min: -20.0,
+                          max: 20.0,
+                          activeColor: Colors.deepPurple,
+                          onChanged: (value) {
+                            setState(() => shadowOffsetY = value);
+                            setSheetState(() {});
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      const SizedBox(width: 12),
+                      const Icon(Icons.format_color_fill_outlined, size: 26),
+                      Expanded(
+                        child: Slider(
+                          value: shadowBlur,
+                          min: 0.0,
+                          max: 30.0,
+                          activeColor: Colors.deepPurple,
+                          onChanged: (value) {
+                            setState(() => shadowBlur = value);
+                            setSheetState(() {});
+                          },
+                        ),
+                      ),
+                      Text(
+                        shadowBlur.toInt().toString(),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(width: 12),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 70,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      itemCount: borderColorList.length + 1,
+                      itemBuilder: (context, index) {
+                        if (index == 0) {
+                          return GestureDetector(
+                            onTap: () {
+                              setState(() => hasShadow = false);
+                              setSheetState(() {});
+                            },
+                            child: Container(
+                              height: 50,
+                              width: 50,
+                              margin: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(50),
+                                color: Colors.grey.shade200,
+                                border: !hasShadow
+                                    ? Border.all(
+                                        color: Colors.deepPurple, width: 3)
+                                    : null,
+                              ),
+                              child: const Icon(Icons.colorize, size: 22),
+                            ),
+                          );
+                        }
+                        final shadowColor = borderColorList[index - 1];
+                        final isSelected =
+                            hasShadow && selectedShadowColor == shadowColor;
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              hasShadow = true;
+                              selectedShadowColor = shadowColor;
+                            });
+                            setSheetState(() {});
+                          },
+                          child: Container(
+                            height: 50,
+                            width: 50,
+                            margin: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(50),
+                              color: shadowColor,
+                              border: isSelected
+                                  ? Border.all(
+                                      color: Colors.deepPurple, width: 3)
+                                  : null,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  // ============================================================
+  //  B. GRADIENT BOTTOM SHEET — fixed layout (SizedBox not Expanded)
+  // ============================================================
+  void _openGradientBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
         return SizedBox(
-          height: 300,
+          height: 450,
           child: Column(
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
+                    onPressed: () => Navigator.pop(context),
                     icon: const Icon(Icons.close, size: 30),
                   ),
-
                   CostumeTextWidget(
-                    text: "Text Shadow",
+                    text: "Choose Gradient",
                     color: Colors.black,
                     size: 15,
                   ),
-
                   IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
+                    onPressed: () => Navigator.pop(context),
                     icon: const Icon(Icons.check, size: 30),
                   ),
                 ],
               ),
-
               const SizedBox(height: 10),
-
               Expanded(
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: borderColorList.length,
-                  itemBuilder: (context, index) {
-                    final shadowColor = borderColorList[index];
-
-                    return Flexible(
-                      child: Container(
-                        height: 50,
-                        width: 50,
-                        margin: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(50),
-                          color: shadowColor,
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: GridView.builder(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      childAspectRatio: 1,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                    ),
+                    itemCount: gradientList.length,
+                    itemBuilder: (context, index) {
+                      final gradient = gradientList[index];
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            selectedGradient = gradient;
+                            selectedColor = Colors.white;
+                            selectedGalleryImage = null;
+                            selectedBackgroundImagePath = null;
+                          });
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: gradient,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
               ),
             ],
@@ -715,26 +1125,301 @@ class _PickupLineMakerScreenState extends State<PickupLineMakerScreen> {
     );
   }
 
-  //  text Controller dispose
+  // ============================================================
+  //  OPACITY BOTTOM SHEET (unchanged)
+  // ============================================================
+  void _openOpacityBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setSheetState) {
+            return Container(
+              height: 200,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30),
+                ),
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Icon(Icons.close, size: 28),
+                      ),
+                      const Text(
+                        "Background Opacity",
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          setState(() {});
+                          Navigator.pop(context);
+                        },
+                        child: const Icon(Icons.check, size: 28),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      const SizedBox(width: 10),
+                      const Icon(Icons.opacity, size: 28),
+                      Expanded(
+                        child: Slider(
+                          value: selectedOpacity,
+                          min: 0.1,
+                          max: 1.0,
+                          activeColor: Colors.deepPurple,
+                          onChanged: (value) {
+                            setState(() => selectedOpacity = value);
+                            setSheetState(() {});
+                          },
+                        ),
+                      ),
+                      Text(
+                        '${(selectedOpacity * 100).toInt()}%',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(width: 15),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  // ============================================================
+  //  C. PADDING BOTTOM SHEET — 4 independent sliders
+  // ============================================================
+  void _openPaddingBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setSheetState) {
+            return Container(
+              height: 380,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30),
+                ),
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Icon(Icons.close, size: 28),
+                      ),
+                      const Text(
+                        "Content Padding",
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          setState(() {});
+                          Navigator.pop(context);
+                        },
+                        child: const Icon(Icons.check, size: 28),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  // Top
+                  _buildPaddingRow(
+                    label: "Top",
+                    value: topPadding,
+                    onChanged: (v) {
+                      setState(() => topPadding = v);
+                      setSheetState(() {});
+                    },
+                  ),
+                  // Bottom
+                  _buildPaddingRow(
+                    label: "Bot",
+                    value: bottomPadding,
+                    onChanged: (v) {
+                      setState(() => bottomPadding = v);
+                      setSheetState(() {});
+                    },
+                  ),
+                  // Left
+                  _buildPaddingRow(
+                    label: "Left",
+                    value: leftPadding,
+                    onChanged: (v) {
+                      setState(() => leftPadding = v);
+                      setSheetState(() {});
+                    },
+                  ),
+                  // Right
+                  _buildPaddingRow(
+                    label: "Right",
+                    value: rightPadding,
+                    onChanged: (v) {
+                      setState(() => rightPadding = v);
+                      setSheetState(() {});
+                    },
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildPaddingRow({
+    required String label,
+    required double value,
+    required ValueChanged<double> onChanged,
+  }) {
+    return Row(
+      children: [
+        const SizedBox(width: 10),
+        SizedBox(
+          width: 40,
+          child: Text(
+            label,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+          ),
+        ),
+        Expanded(
+          child: Slider(
+            value: value,
+            min: 0.0,
+            max: 80.0,
+            activeColor: Colors.deepPurple,
+            onChanged: onChanged,
+          ),
+        ),
+        Text(
+          value.toInt().toString(),
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(width: 15),
+      ],
+    );
+  }
+
+  // ============================================================
+  //  CROP BOTTOM SHEET (unchanged)
+  // ============================================================
+  void _openCropBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Container(
+          height: 200,
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(30),
+              topRight: Radius.circular(30),
+            ),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Icon(Icons.close, size: 28),
+                  ),
+                  const Text(
+                    "Crop",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(width: 48),
+                ],
+              ),
+              const SizedBox(height: 20),
+              CostumeTextWidget(
+                text: "Crop feature coming soon",
+                color: Colors.black54,
+                size: 16,
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  // ============================================================
+  //  E. DOWNLOAD — RepaintBoundary + path_provider
+  // ============================================================
+  Future<void> _downloadImage() async {
+    try {
+      final RenderRepaintBoundary boundary = _previewKey.currentContext!
+          .findRenderObject()! as RenderRepaintBoundary;
+      final image = await boundary.toImage(pixelRatio: 3.0);
+      final ByteData? byteData =
+          await image.toByteData(format: ui.ImageByteFormat.png);
+      final Uint8List pngBytes = byteData!.buffer.asUint8List();
+      final dir = await getTemporaryDirectory();
+      final file = File(
+          '${dir.path}/pickup_line_${DateTime.now().millisecondsSinceEpoch}.png');
+      await file.writeAsBytes(pngBytes);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Saved to: ${file.path}')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Download failed: $e')),
+        );
+      }
+    }
+  }
+
+  // ============================================================
+  //  Dispose
+  // ============================================================
   @override
   void dispose() {
     _textController.dispose();
     super.dispose();
   }
 
-  // ----------------------------------------------- main body --------------------------------------------------
-
+  // ============================================================
+  //  BUILD
+  // ============================================================
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Pickup Line Maker"),
+        title: const Text("Pickup Line Maker"),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 10),
             child: IconButton(
-              onPressed: () {},
-              icon: Icon(Icons.download, size: 30),
+              onPressed: _downloadImage,
+              icon: const Icon(Icons.download, size: 30),
             ),
           ),
         ],
@@ -742,13 +1427,25 @@ class _PickupLineMakerScreenState extends State<PickupLineMakerScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // preview screen ------------------
-            Expanded(
+            // F. Preview widget with all new params
+            RepaintBoundary(
+              key: _previewKey,
               child: PickupLinePreviewWidget(
-
                 controller: _textController,
-                backgroundColor: selectedColor, // selected background color
-                fontSize: fontSize, // font size set
+                backgroundColor: selectedColor,
+                gradientBackground: selectedGradient,
+                galleryImage: selectedGalleryImage,
+                presetImagePath: selectedBackgroundImagePath != null &&
+                        !selectedBackgroundImagePath!.startsWith('preset_')
+                    ? selectedBackgroundImagePath
+                    : null,
+                previewPadding: EdgeInsets.only(
+                  top: topPadding,
+                  bottom: bottomPadding,
+                  left: leftPadding,
+                  right: rightPadding,
+                ),
+                fontSize: fontSize,
                 fontFamily: selectedFontFamily,
                 latterSpacing: textSpacing,
                 lineHeight: vSpacing,
@@ -759,12 +1456,22 @@ class _PickupLineMakerScreenState extends State<PickupLineMakerScreen> {
                     ? TextDecoration.underline
                     : TextDecoration.none,
                 textAlign: textAlign,
-
+                hasBorder: hasBorder,
+                borderColor: borderColor,
+                borderWidth: borderWidth,
+                hasShadow: hasShadow,
+                shadowColor: selectedShadowColor,
+                shadowOffsetX: shadowOffsetX,
+                shadowOffsetY: shadowOffsetY,
+                shadowBlur: shadowBlur,
+                backgroundOpacity: selectedOpacity,
               ),
             ),
-            // Editor tool --------------------
+
+            // Editor tool bar
             Padding(
-              padding: const EdgeInsets.only(right: 20, left: 20, bottom: 20),
+              padding:
+                  const EdgeInsets.only(right: 20, left: 20, bottom: 20),
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
@@ -772,72 +1479,53 @@ class _PickupLineMakerScreenState extends State<PickupLineMakerScreen> {
                     EditTextBottonWidget(
                       icon: Icons.format_color_fill,
                       text: 'Background',
-                      onTap: () {
-                        _openBackgroundBottomSheet();
-                      },
+                      onTap: _openBackgroundBottomSheet,
                     ),
-
-                    ///background
                     EditTextBottonWidget(
                       icon: Icons.text_fields,
                       text: "Size",
-                      onTap: () {
-                        setState(() {
-                          _openTextSizeBottomSheet();
-                        });
-                      },
+                      onTap: _openTextSizeBottomSheet,
                     ),
-
-                    ///text size
                     EditTextBottonWidget(
-                      icon: Icons.text_format, //Font Size
+                      icon: Icons.text_format,
                       text: "Font",
-                      onTap: () {
-                        setState(() {
-                          _openFontFamilyBottomSheet();
-                        });
-                      },
+                      onTap: _openFontFamilyBottomSheet,
                     ),
-
-                    ///Font Family
                     EditTextBottonWidget(
                       icon: Icons.color_lens_outlined,
                       text: "Color",
-                      onTap: () {
-                        _openTextColorBottomSheet();
-                      },
+                      onTap: _openTextColorBottomSheet,
                     ),
-
-                    ///Text Color
                     EditTextBottonWidget(
                       icon: Icons.border_style,
                       text: "Border",
-                      onTap: () {
-                        _openBorderBottomSheet();
-                      },
+                      onTap: _openBorderBottomSheet,
                     ),
-
-                    ///Border
                     EditTextBottonWidget(
                       icon: Icons.wb_shade,
                       text: "Shadow",
-                      onTap: (){
-                        _openShadowBottomSheet();
-                      },
-                    ), // shadow
+                      onTap: _openShadowBottomSheet,
+                    ),
                     EditTextBottonWidget(
                       icon: Icons.gradient,
                       text: "Gradient",
-                    ), //Gradient
+                      onTap: _openGradientBottomSheet,
+                    ),
                     EditTextBottonWidget(
                       icon: Icons.opacity,
                       text: "Opacity",
-                    ), //Opacity
+                      onTap: _openOpacityBottomSheet,
+                    ),
                     EditTextBottonWidget(
                       icon: Icons.padding,
                       text: "Padding",
-                    ), //Padding
-                    EditTextBottonWidget(icon: Icons.crop, text: "Crop"), //crop
+                      onTap: _openPaddingBottomSheet,
+                    ),
+                    EditTextBottonWidget(
+                      icon: Icons.crop,
+                      text: "Crop",
+                      onTap: _openCropBottomSheet,
+                    ),
                   ],
                 ),
               ),
