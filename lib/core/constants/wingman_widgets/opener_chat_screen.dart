@@ -1,7 +1,9 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../core/network/services/craft_message_service.dart';
+import '../../../core/widgets/follow_up_input_widget.dart';
 
 class OpenerChatScreen extends StatefulWidget {
   final String name;
@@ -102,14 +104,16 @@ class _OpenerChatScreenState extends State<OpenerChatScreen> {
     }
   }
 
-  Future<void> _sendFollowUp() async {
-    final text = _followUpController.text.trim();
-    if (text.isEmpty) return;
+  Future<void> _sendFollowUp(String text, File? imageFile) async {
+    if (text.isEmpty && imageFile == null) return;
 
-    _followUpController.clear();
     setState(() {
       _isFollowUpLoading = true;
-      _chatHistory.add({'type': 'user_message', 'text': text});
+      _chatHistory.add({
+        'type': 'user_message',
+        'text': text,
+        'image': imageFile,
+      });
     });
 
     _scrollToBottom();
@@ -119,6 +123,7 @@ class _OpenerChatScreenState extends State<OpenerChatScreen> {
         profileText: text,
         instructions: _toneInstruction,
         existingUserId: widget.userId,
+        imageFile: imageFile,
       );
       if (!mounted) return;
       setState(() {
@@ -129,7 +134,7 @@ class _OpenerChatScreenState extends State<OpenerChatScreen> {
     } catch (e) {
       if (!mounted) return;
       setState(() {
-        _chatHistory.add({'type': 'error', 'text': 'Failed. Try again.'});
+        _chatHistory.add({'type': 'error', 'text': 'Failed to generate reply. Try again.'});
         _isFollowUpLoading = false;
       });
       debugPrint('followUp error: $e');
@@ -164,6 +169,7 @@ class _OpenerChatScreenState extends State<OpenerChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: const Color(0xFFF3EEFF),
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(70),
@@ -222,210 +228,95 @@ class _OpenerChatScreenState extends State<OpenerChatScreen> {
           ),
         ),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: _isLoading
-                ? const Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        CircularProgressIndicator(color: Color(0xFF7C3AED)),
-                        SizedBox(height: 14),
-                        Text(
-                          'Generating openers...',
-                          style: TextStyle(color: Colors.grey),
-                        ),
-                      ],
-                    ),
-                  )
-                : _errorMessage != null && _chatHistory.isEmpty
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.error_outline,
-                              color: Colors.red,
-                              size: 40,
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              _errorMessage!,
-                              style: const TextStyle(color: Colors.red),
-                            ),
-                            const SizedBox(height: 16),
-                            ElevatedButton(
-                              onPressed: _generateInitial,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF7C3AED),
-                              ),
-                              child: const Text(
-                                'Retry',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : ListView.builder(
-                        controller: _scrollController,
-                        padding: const EdgeInsets.all(14),
-                        itemCount:
-                            _chatHistory.length + (_isFollowUpLoading ? 1 : 0),
-                        itemBuilder: (context, index) {
-                          if (index == _chatHistory.length &&
-                              _isFollowUpLoading) {
-                            return _buildTypingIndicator();
-                          }
-                          final item = _chatHistory[index];
-                          if (item['type'] == 'user_context') {
-                            return _buildUserContextBubble(item);
-                          } else if (item['type'] == 'user_message') {
-                            return _buildUserMessageBubble(
-                                item['text'] as String);
-                          } else if (item['type'] == 'ai') {
-                            return _buildAiResponseCard(
-                                item['messages'] as List<String>);
-                          } else if (item['type'] == 'error') {
-                            return _buildErrorItem(item['text'] as String);
-                          }
-                          return const SizedBox.shrink();
-                        },
+      body: SafeArea(
+        top: false,
+        child: Column(
+          children: [
+            Expanded(
+              child: _isLoading
+                  ? const Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CircularProgressIndicator(color: Color(0xFF7C3AED)),
+                          SizedBox(height: 14),
+                          Text(
+                            'Generating openers...',
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ],
                       ),
-          ),
-
-          // Bottom bar: Try Again + follow-up input
-          if (!_isLoading)
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.06),
-                    blurRadius: 8,
-                    offset: const Offset(0, -2),
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Try Again button
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(14, 10, 14, 4),
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButton.icon(
-                        onPressed: _isFollowUpLoading
-                            ? null
-                            : () {
-                                setState(() {
-                                  _chatHistory.clear();
-                                });
-                                _generateInitial();
-                              },
-                        icon: const Icon(
-                          Icons.refresh_rounded,
-                          size: 18,
-                          color: Color(0xFF7C3AED),
-                        ),
-                        label: const Text(
-                          'Try Again',
-                          style: TextStyle(
-                            color: Color(0xFF7C3AED),
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        style: OutlinedButton.styleFrom(
-                          side: const BorderSide(
-                            color: Color(0xFF7C3AED),
-                            width: 1.5,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                        ),
-                      ),
-                    ),
-                  ),
-                  // Follow-up input
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(
-                      12,
-                      4,
-                      12,
-                      MediaQuery.of(context).viewInsets.bottom + 10,
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFF3EEFF),
-                              borderRadius: BorderRadius.circular(30),
-                              border: Border.all(
-                                color: const Color(0xFF7C3AED)
-                                    .withValues(alpha: 0.3),
+                    )
+                  : _errorMessage != null && _chatHistory.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.error_outline,
+                                color: Colors.red,
+                                size: 40,
                               ),
-                            ),
-                            child: TextField(
-                              controller: _followUpController,
-                              decoration: const InputDecoration(
-                                hintText: 'Ask a follow-up...',
-                                hintStyle: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 13,
+                              const SizedBox(height: 10),
+                              Text(
+                                _errorMessage!,
+                                style: const TextStyle(color: Colors.red),
+                              ),
+                              const SizedBox(height: 16),
+                              ElevatedButton(
+                                onPressed: _generateInitial,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF7C3AED),
                                 ),
-                                border: InputBorder.none,
-                                contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 10,
+                                child: const Text(
+                                  'Retry',
+                                  style: TextStyle(color: Colors.white),
                                 ),
                               ),
-                              onSubmitted: (_) => _sendFollowUp(),
-                            ),
+                            ],
                           ),
+                        )
+                      : ListView.builder(
+                          controller: _scrollController,
+                          padding: const EdgeInsets.all(14),
+                          itemCount:
+                              _chatHistory.length + (_isFollowUpLoading ? 1 : 0),
+                          itemBuilder: (context, index) {
+                            if (index == _chatHistory.length &&
+                                _isFollowUpLoading) {
+                              return _buildTypingIndicator();
+                            }
+                            final item = _chatHistory[index];
+                            if (item['type'] == 'user_context') {
+                              return _buildUserContextBubble(item);
+                            } else if (item['type'] == 'user_message') {
+                              return _buildUserMessageBubble(item);
+                            } else if (item['type'] == 'ai') {
+                              return _buildAiResponseCard(
+                                  item['messages'] as List<String>);
+                            } else if (item['type'] == 'error') {
+                              return _buildErrorItem(item['text'] as String);
+                            }
+                            return const SizedBox.shrink();
+                          },
                         ),
-                        const SizedBox(width: 8),
-                        GestureDetector(
-                          onTap:
-                              _isFollowUpLoading ? null : _sendFollowUp,
-                          child: Container(
-                            width: 42,
-                            height: 42,
-                            decoration: const BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  Color(0xFF7C3AED),
-                                  Color(0xFF9F67F0),
-                                ],
-                              ),
-                              shape: BoxShape.circle,
-                            ),
-                            child: _isFollowUpLoading
-                                ? const Padding(
-                                    padding: EdgeInsets.all(10),
-                                    child: CircularProgressIndicator(
-                                      color: Colors.white,
-                                      strokeWidth: 2,
-                                    ),
-                                  )
-                                : const Icon(
-                                    Icons.send_rounded,
-                                    color: Colors.white,
-                                    size: 20,
-                                  ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
             ),
-        ],
+
+            // Bottom bar: Try Again + follow-up input widget
+            if (!_isLoading)
+              FollowUpInputWidget(
+                controller: _followUpController,
+                isLoading: _isFollowUpLoading,
+                onSend: (text, imageFile) => _sendFollowUp(text, imageFile),
+                onTryAgain: () {
+                  setState(() {
+                    _chatHistory.clear();
+                  });
+                  _generateInitial();
+                },
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -478,7 +369,10 @@ class _OpenerChatScreenState extends State<OpenerChatScreen> {
   }
 
   // User follow-up bubble (right side, purple gradient)
-  Widget _buildUserMessageBubble(String text) {
+  Widget _buildUserMessageBubble(Map<String, dynamic> item) {
+    final text = item['text'] as String?;
+    final imageFile = item['image'] as File?;
+
     return Align(
       alignment: Alignment.centerRight,
       child: Container(
@@ -496,9 +390,27 @@ class _OpenerChatScreenState extends State<OpenerChatScreen> {
             bottomRight: Radius.circular(4),
           ),
         ),
-        child: Text(
-          text,
-          style: const TextStyle(color: Colors.white, fontSize: 13),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            if (imageFile != null) ...[
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.file(
+                  imageFile,
+                  width: 160,
+                  height: 120,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              if (text != null && text.isNotEmpty) const SizedBox(height: 8),
+            ],
+            if (text != null && text.isNotEmpty)
+              Text(
+                text,
+                style: const TextStyle(color: Colors.white, fontSize: 13),
+              ),
+          ],
         ),
       ),
     );

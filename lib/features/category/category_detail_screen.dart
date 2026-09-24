@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/constants/pickup_line/pickup_line_card.dart';
 import '../../core/network/models/pickup_line_model.dart';
+import 'category_pickup_lines_screen.dart';
 import 'category_search_screen.dart';
 
 class CategoryDetailScreen extends StatefulWidget {
@@ -70,6 +71,25 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
             fontWeight: FontWeight.w700,
           ),
         ),
+        actions: [
+          TextButton.icon(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => CategoryPickupLinesScreen(
+                    category: _selectedCategory,
+                  ),
+                ),
+              );
+            },
+            icon: const Icon(Icons.auto_awesome_rounded, color: Color(0xFF8E61E8), size: 18),
+            label: const Text(
+              'AI Lines',
+              style: TextStyle(color: Color(0xFF8E61E8), fontWeight: FontWeight.w600),
+            ),
+          ),
+        ],
       ),
       body: SafeArea(
         child: Padding(

@@ -1,0 +1,1202 @@
+[
+  {
+    "id": "dating_tip_001",
+    "text": "Choose a low-pressure setting for a first date, like a casual cafe.",
+    "category": "First Date",
+    "colorIndex": 0
+  },
+  {
+    "id": "dating_tip_002",
+    "text": "Define what exclusive means together instead of assuming you agree.",
+    "category": "Relationships",
+    "colorIndex": 1
+  },
+  {
+    "id": "dating_tip_003",
+    "text": "Be transparent about your plans instead of leaving gaps to guess.",
+    "category": "Communication",
+    "colorIndex": 2
+  },
+  {
+    "id": "dating_tip_004",
+    "text": "Agree on a signal to pause an argument before it escalates.",
+    "category": "Healthy Relationships",
+    "colorIndex": 3
+  },
+  {
+    "id": "dating_tip_005",
+    "text": "Tell a friend your plans and location before a first meeting.",
+    "category": "Dating Safety",
+    "colorIndex": 4
+  },
+  {
+    "id": "dating_tip_006",
+    "text": "Respect differing opinions on small topics without needing to win.",
+    "category": "Conversation",
+    "colorIndex": 5
+  },
+  {
+    "id": "dating_tip_007",
+    "text": "Ask open-ended questions that let your date share stories rather than one-word facts.",
+    "category": "First Date",
+    "colorIndex": 0
+  },
+  {
+    "id": "dating_tip_008",
+    "text": "Match their texting rhythm initially so neither person feels overwhelmed or ignored.",
+    "category": "Texting",
+    "colorIndex": 1
+  },
+  {
+    "id": "dating_tip_009",
+    "text": "Confidence comes from being comfortable with who you are, not pretending to be someone else.",
+    "category": "Confidence",
+    "colorIndex": 2
+  },
+  {
+    "id": "dating_tip_010",
+    "text": "Give genuine compliments focused on their choices or personality rather than just looks.",
+    "category": "Flirting",
+    "colorIndex": 3
+  },
+  {
+    "id": "dating_tip_011",
+    "text": "Set personal boundaries early so expectations are clear from the start.",
+    "category": "Boundaries",
+    "colorIndex": 4
+  },
+  {
+    "id": "dating_tip_012",
+    "text": "Never compromise your physical safety to be polite on a date.",
+    "category": "Dating Safety",
+    "colorIndex": 5
+  },
+  {
+    "id": "dating_tip_013",
+    "text": "Listen to understand their feelings instead of formulating your response while they speak.",
+    "category": "Communication",
+    "colorIndex": 0
+  },
+  {
+    "id": "dating_tip_014",
+    "text": "Keep your dating profile photos recent, clear, and representative of your everyday life.",
+    "category": "Online Dating",
+    "colorIndex": 1
+  },
+  {
+    "id": "dating_tip_015",
+    "text": "Plan activities with a built-in end time so both of you can easily decide whether to extend.",
+    "category": "Planning Dates",
+    "colorIndex": 2
+  },
+  {
+    "id": "dating_tip_016",
+    "text": "Schedule regular video dates when long distance to maintain emotional intimacy.",
+    "category": "Long Distance",
+    "colorIndex": 3
+  },
+  {
+    "id": "dating_tip_017",
+    "text": "Allow yourself time to heal after a breakup before entering the dating scene again.",
+    "category": "Breakups",
+    "colorIndex": 4
+  },
+  {
+    "id": "dating_tip_018",
+    "text": "Notice how they treat waitstaff and service workers; it reveals genuine character.",
+    "category": "First Date",
+    "colorIndex": 5
+  },
+  {
+    "id": "dating_tip_019",
+    "text": "Express your appreciation when they make an effort, even for simple gestures.",
+    "category": "Healthy Relationships",
+    "colorIndex": 0
+  },
+  {
+    "id": "dating_tip_020",
+    "text": "Avoid talking excessively about past relationships on initial dates.",
+    "category": "Conversation",
+    "colorIndex": 1
+  },
+  {
+    "id": "dating_tip_021",
+    "text": "Put your phone face down during dates to show you are fully present.",
+    "category": "Social Skills",
+    "colorIndex": 2
+  },
+  {
+    "id": "dating_tip_022",
+    "text": "A playful tease shows warmth, but keep it kindhearted and never mean-spirited.",
+    "category": "Flirting",
+    "colorIndex": 3
+  },
+  {
+    "id": "dating_tip_023",
+    "text": "Hold space for their vulnerabilities without immediately trying to offer fixes.",
+    "category": "Emotional Connection",
+    "colorIndex": 4
+  },
+  {
+    "id": "dating_tip_024",
+    "text": "When you feel unsure about where things stand, ask openly rather than overthinking.",
+    "category": "Communication",
+    "colorIndex": 5
+  },
+  {
+    "id": "dating_tip_025",
+    "text": "Celebrate small milestones together to build shared positive memories.",
+    "category": "Relationships",
+    "colorIndex": 0
+  },
+  {
+    "id": "dating_tip_026",
+    "text": "Send thoughtful check-in texts that do not demand an immediate reply.",
+    "category": "Texting",
+    "colorIndex": 1
+  },
+  {
+    "id": "dating_tip_027",
+    "text": "Trust your instincts; if something feels wrong, it is okay to leave politely.",
+    "category": "Dating Safety",
+    "colorIndex": 2
+  },
+  {
+    "id": "dating_tip_028",
+    "text": "Practice good posture and open body language to feel naturally more confident.",
+    "category": "Confidence",
+    "colorIndex": 3
+  },
+  {
+    "id": "dating_tip_029",
+    "text": "Pick a date activity that allows conversation rather than a noisy, dark theater.",
+    "category": "First Date",
+    "colorIndex": 4
+  },
+  {
+    "id": "dating_tip_030",
+    "text": "Respect when someone says no without asking them to justify their reasons.",
+    "category": "Boundaries",
+    "colorIndex": 5
+  },
+  {
+    "id": "dating_tip_031",
+    "text": "Write a brief, honest bio that mentions hobbies you genuinely enjoy.",
+    "category": "Online Dating",
+    "colorIndex": 0
+  },
+  {
+    "id": "dating_tip_032",
+    "text": "Establish a clear countdown for your next reunion when navigating long distance.",
+    "category": "Long Distance",
+    "colorIndex": 1
+  },
+  {
+    "id": "dating_tip_033",
+    "text": "Remember that a rejection is simply a mismatch in direction, not a reflection of your worth.",
+    "category": "Confidence",
+    "colorIndex": 2
+  },
+  {
+    "id": "dating_tip_034",
+    "text": "Be direct about your dating intentions so you both invest time wisely.",
+    "category": "Communication",
+    "colorIndex": 3
+  },
+  {
+    "id": "dating_tip_035",
+    "text": "Maintain your friendships and personal hobbies even when falling in love.",
+    "category": "Healthy Relationships",
+    "colorIndex": 4
+  },
+  {
+    "id": "dating_tip_036",
+    "text": "Follow up after a great date within 24 hours to let them know you enjoyed their company.",
+    "category": "First Date",
+    "colorIndex": 5
+  },
+  {
+    "id": "dating_tip_037",
+    "text": "Keep texting light and engaging; save deep emotional debates for in-person talks.",
+    "category": "Texting",
+    "colorIndex": 0
+  },
+  {
+    "id": "dating_tip_038",
+    "text": "Practice active empathy by validating their perspective even when you disagree.",
+    "category": "Emotional Connection",
+    "colorIndex": 1
+  },
+  {
+    "id": "dating_tip_039",
+    "text": "Choose public, well-lit venues when meeting someone for the first time.",
+    "category": "Dating Safety",
+    "colorIndex": 2
+  },
+  {
+    "id": "dating_tip_040",
+    "text": "Focus on making the other person feel heard rather than trying to impress them.",
+    "category": "Social Skills",
+    "colorIndex": 3
+  },
+  {
+    "id": "dating_tip_041",
+    "text": "Gently state your comfort levels regarding personal space and intimacy.",
+    "category": "Boundaries",
+    "colorIndex": 4
+  },
+  {
+    "id": "dating_tip_042",
+    "text": "Flirt with subtle eye contact and a warm, sincere smile.",
+    "category": "Flirting",
+    "colorIndex": 5
+  },
+  {
+    "id": "dating_tip_043",
+    "text": "Choose mutual activities like miniature golf or cooking classes to break the ice.",
+    "category": "Planning Dates",
+    "colorIndex": 0
+  },
+  {
+    "id": "dating_tip_044",
+    "text": "Reflect on what past relationships taught you instead of harboring lingering resentment.",
+    "category": "Breakups",
+    "colorIndex": 1
+  },
+  {
+    "id": "dating_tip_045",
+    "text": "Share funny everyday moments to build casual conversational rapport.",
+    "category": "Conversation",
+    "colorIndex": 2
+  },
+  {
+    "id": "dating_tip_046",
+    "text": "Remember that consistency in actions speaks louder than passionate words.",
+    "category": "Relationships",
+    "colorIndex": 3
+  },
+  {
+    "id": "dating_tip_047",
+    "text": "Check in on their day with specific questions rather than generic greetings.",
+    "category": "Texting",
+    "colorIndex": 4
+  },
+  {
+    "id": "dating_tip_048",
+    "text": "Avoid sharing private financial details or home addresses with online matches too early.",
+    "category": "Dating Safety",
+    "colorIndex": 5
+  },
+  {
+    "id": "dating_tip_049",
+    "text": "Accept compliments gracefully with a simple 'Thank you' instead of deflecting.",
+    "category": "Confidence",
+    "colorIndex": 0
+  },
+  {
+    "id": "dating_tip_050",
+    "text": "Find shared values on core topics like family and lifestyle early in the journey.",
+    "category": "Healthy Relationships",
+    "colorIndex": 1
+  },
+  {
+    "id": "dating_tip_051",
+    "text": "Dress in clothing that makes you feel both comfortable and confident.",
+    "category": "First Date",
+    "colorIndex": 2
+  },
+  {
+    "id": "dating_tip_052",
+    "text": "Communicate your boundaries around phone use and messaging during work hours.",
+    "category": "Boundaries",
+    "colorIndex": 3
+  },
+  {
+    "id": "dating_tip_053",
+    "text": "Laughter is one of the quickest ways to build romantic chemistry.",
+    "category": "Flirting",
+    "colorIndex": 4
+  },
+  {
+    "id": "dating_tip_054",
+    "text": "Support each other's individual aspirations without feeling competitive.",
+    "category": "Relationships",
+    "colorIndex": 5
+  },
+  {
+    "id": "dating_tip_055",
+    "text": "Watch movies simultaneously over video calls to share synchronized downtime.",
+    "category": "Long Distance",
+    "colorIndex": 0
+  },
+  {
+    "id": "dating_tip_056",
+    "text": "Be honest about dietary preferences before choosing a dinner location.",
+    "category": "Planning Dates",
+    "colorIndex": 1
+  },
+  {
+    "id": "dating_tip_057",
+    "text": "Give yourself permission to feel grief after a relationship concludes.",
+    "category": "Breakups",
+    "colorIndex": 2
+  },
+  {
+    "id": "dating_tip_058",
+    "text": "Prompt your match on specific details from their profile to start conversations easily.",
+    "category": "Online Dating",
+    "colorIndex": 3
+  },
+  {
+    "id": "dating_tip_059",
+    "text": "Practice comfortable silence; not every second needs to be filled with chatter.",
+    "category": "Conversation",
+    "colorIndex": 4
+  },
+  {
+    "id": "dating_tip_060",
+    "text": "Show curiosity about their passions even if it is a subject you know little about.",
+    "category": "Social Skills",
+    "colorIndex": 5
+  },
+  {
+    "id": "dating_tip_061",
+    "text": "Check in emotionally with yourself after a date to see how you truly felt.",
+    "category": "Confidence",
+    "colorIndex": 0
+  },
+  {
+    "id": "dating_tip_062",
+    "text": "Clarify misunderstandings over voice or in person rather than through long text essays.",
+    "category": "Communication",
+    "colorIndex": 1
+  },
+  {
+    "id": "dating_tip_063",
+    "text": "Arrange your own transportation to and from first dates.",
+    "category": "Dating Safety",
+    "colorIndex": 2
+  },
+  {
+    "id": "dating_tip_064",
+    "text": "Express physical affection gradually at a pace both partners feel enthusiastic about.",
+    "category": "Boundaries",
+    "colorIndex": 3
+  },
+  {
+    "id": "dating_tip_065",
+    "text": "A subtle touch on the forearm can signal warmth when natural chemistry is present.",
+    "category": "Flirting",
+    "colorIndex": 4
+  },
+  {
+    "id": "dating_tip_066",
+    "text": "Notice whether they ask questions about your life or only speak about themselves.",
+    "category": "First Date",
+    "colorIndex": 5
+  },
+  {
+    "id": "dating_tip_067",
+    "text": "Learn each other's primary love languages to express care effectively.",
+    "category": "Emotional Connection",
+    "colorIndex": 0
+  },
+  {
+    "id": "dating_tip_068",
+    "text": "Avoid sending double or triple texts if they take time to respond.",
+    "category": "Texting",
+    "colorIndex": 1
+  },
+  {
+    "id": "dating_tip_069",
+    "text": "Plan surprise virtual care packages with handwritten letters for long-distance partners.",
+    "category": "Long Distance",
+    "colorIndex": 2
+  },
+  {
+    "id": "dating_tip_070",
+    "text": "Treat dating as a way to discover compatible people rather than a performance.",
+    "category": "Confidence",
+    "colorIndex": 3
+  },
+  {
+    "id": "dating_tip_071",
+    "text": "Agree to take time-outs during arguments if either person feels flooded.",
+    "category": "Healthy Relationships",
+    "colorIndex": 4
+  },
+  {
+    "id": "dating_tip_072",
+    "text": "Choose interactive date spots like museums or botanical gardens to inspire easy conversation.",
+    "category": "Planning Dates",
+    "colorIndex": 5
+  },
+  {
+    "id": "dating_tip_073",
+    "text": "Remove reminders of an ex from your immediate living space to promote emotional closure.",
+    "category": "Breakups",
+    "colorIndex": 0
+  },
+  {
+    "id": "dating_tip_074",
+    "text": "Be upfront about dealbreakers early on to prevent painful entanglements later.",
+    "category": "Communication",
+    "colorIndex": 1
+  },
+  {
+    "id": "dating_tip_075",
+    "text": "Use high-quality photos that show your real smile without heavy filters.",
+    "category": "Online Dating",
+    "colorIndex": 2
+  },
+  {
+    "id": "dating_tip_076",
+    "text": "Never feel pressured into consuming alcohol or staying out later than you want.",
+    "category": "Dating Safety",
+    "colorIndex": 3
+  },
+  {
+    "id": "dating_tip_077",
+    "text": "Share childhood stories to foster deeper emotional connection and vulnerability.",
+    "category": "Conversation",
+    "colorIndex": 4
+  },
+  {
+    "id": "dating_tip_078",
+    "text": "Compliment their sense of humor or thoughtfulness when they make you smile.",
+    "category": "Flirting",
+    "colorIndex": 5
+  },
+  {
+    "id": "dating_tip_079",
+    "text": "Healthy boundaries allow you to say 'yes' to love without losing your sense of self.",
+    "category": "Boundaries",
+    "colorIndex": 0
+  },
+  {
+    "id": "dating_tip_080",
+    "text": "Offer to split the bill on a first date or reciprocate by buying dessert.",
+    "category": "First Date",
+    "colorIndex": 1
+  },
+  {
+    "id": "dating_tip_081",
+    "text": "Maintain independent social circles so your partner is not your sole emotional outlet.",
+    "category": "Relationships",
+    "colorIndex": 2
+  },
+  {
+    "id": "dating_tip_082",
+    "text": "Use voice notes to convey tone and warmth when text messages feel too dry.",
+    "category": "Texting",
+    "colorIndex": 3
+  },
+  {
+    "id": "dating_tip_083",
+    "text": "Cultivate your own passions; having an engaging life makes you naturally attractive.",
+    "category": "Confidence",
+    "colorIndex": 4
+  },
+  {
+    "id": "dating_tip_084",
+    "text": "Be patient with different communication speeds when in different time zones.",
+    "category": "Long Distance",
+    "colorIndex": 5
+  },
+  {
+    "id": "dating_tip_085",
+    "text": "Acknowledge mistakes sincerely with an apology instead of defensive rationalizations.",
+    "category": "Healthy Relationships",
+    "colorIndex": 0
+  },
+  {
+    "id": "dating_tip_086",
+    "text": "Ask about their bucket list dreams to discover their adventurous side.",
+    "category": "Conversation",
+    "colorIndex": 1
+  },
+  {
+    "id": "dating_tip_087",
+    "text": "Plan dates around shared hobbies like hiking or browsing bookstores.",
+    "category": "Planning Dates",
+    "colorIndex": 2
+  },
+  {
+    "id": "dating_tip_088",
+    "text": "Meet in public places for the first few dates until trust is firmly established.",
+    "category": "Dating Safety",
+    "colorIndex": 3
+  },
+  {
+    "id": "dating_tip_089",
+    "text": "Resist the urge to check an ex's social media accounts after ending things.",
+    "category": "Breakups",
+    "colorIndex": 4
+  },
+  {
+    "id": "dating_tip_090",
+    "text": "Let your personality shine through in your dating app prompts with authentic humor.",
+    "category": "Online Dating",
+    "colorIndex": 5
+  },
+  {
+    "id": "dating_tip_091",
+    "text": "Remember that true chemistry develops through presence, not just texting frequency.",
+    "category": "First Date",
+    "colorIndex": 0
+  },
+  {
+    "id": "dating_tip_092",
+    "text": "Give your partner the benefit of the doubt before assuming negative intentions.",
+    "category": "Emotional Connection",
+    "colorIndex": 1
+  },
+  {
+    "id": "dating_tip_093",
+    "text": "Make sure to clearly express your relationship expectations before moving too fast.",
+    "category": "Boundaries",
+    "colorIndex": 2
+  },
+  {
+    "id": "dating_tip_094",
+    "text": "Playful banter works best when built on mutual respect and shared amusement.",
+    "category": "Flirting",
+    "colorIndex": 3
+  },
+  {
+    "id": "dating_tip_095",
+    "text": "Communicate your appreciation when someone plans a thoughtful outing.",
+    "category": "Communication",
+    "colorIndex": 4
+  },
+  {
+    "id": "dating_tip_096",
+    "text": "A short walk in a lively park is a relaxed, budget-friendly first date idea.",
+    "category": "Planning Dates",
+    "colorIndex": 5
+  },
+  {
+    "id": "dating_tip_097",
+    "text": "Do not compromise your personal values just to keep someone interested.",
+    "category": "Confidence",
+    "colorIndex": 0
+  },
+  {
+    "id": "dating_tip_098",
+    "text": "Notice whether your partner respects your time by keeping commitments.",
+    "category": "Relationships",
+    "colorIndex": 1
+  },
+  {
+    "id": "dating_tip_099",
+    "text": "Keep initial messages on dating apps positive, specific, and conversational.",
+    "category": "Online Dating",
+    "colorIndex": 2
+  },
+  {
+    "id": "dating_tip_100",
+    "text": "Have emergency contacts saved and readily accessible whenever going on new dates.",
+    "category": "Dating Safety",
+    "colorIndex": 3
+  },
+  {
+    "id": "dating_tip_101",
+    "text": "Share favorite songs or playlists with each other to connect over music.",
+    "category": "Texting",
+    "colorIndex": 4
+  },
+  {
+    "id": "dating_tip_102",
+    "text": "Establish a predictable routine for calling when living far apart.",
+    "category": "Long Distance",
+    "colorIndex": 5
+  },
+  {
+    "id": "dating_tip_103",
+    "text": "Take time to rediscover your solo interests and personal goals after parting ways.",
+    "category": "Breakups",
+    "colorIndex": 0
+  },
+  {
+    "id": "dating_tip_104",
+    "text": "Engage with active curiosity about their family background and traditions.",
+    "category": "Conversation",
+    "colorIndex": 1
+  },
+  {
+    "id": "dating_tip_105",
+    "text": "Focus on creating a balanced dialogue where both voices have equal space.",
+    "category": "Social Skills",
+    "colorIndex": 2
+  },
+  {
+    "id": "dating_tip_106",
+    "text": "Express gratitude for the small ways your partner supports your daily life.",
+    "category": "Healthy Relationships",
+    "colorIndex": 3
+  },
+  {
+    "id": "dating_tip_107",
+    "text": "Keep your first date to around one to two hours to leave both of you wanting more.",
+    "category": "First Date",
+    "colorIndex": 4
+  },
+  {
+    "id": "dating_tip_108",
+    "text": "Learn to say 'no' comfortably without feeling guilty or apologetic.",
+    "category": "Boundaries",
+    "colorIndex": 5
+  },
+  {
+    "id": "dating_tip_109",
+    "text": "Flirting is about creating a warm spark, so keep interactions light and uplifting.",
+    "category": "Flirting",
+    "colorIndex": 0
+  },
+  {
+    "id": "dating_tip_110",
+    "text": "Validate their feelings before offering your own perspective during discussions.",
+    "category": "Emotional Connection",
+    "colorIndex": 1
+  },
+  {
+    "id": "dating_tip_111",
+    "text": "Choose dates where you can work on a creative project together like pottery.",
+    "category": "Planning Dates",
+    "colorIndex": 2
+  },
+  {
+    "id": "dating_tip_112",
+    "text": "Be proud of your personal journey; vulnerability is a sign of inner strength.",
+    "category": "Confidence",
+    "colorIndex": 3
+  },
+  {
+    "id": "dating_tip_113",
+    "text": "Always keep your beverage in sight and never accept drinks from strangers.",
+    "category": "Dating Safety",
+    "colorIndex": 4
+  },
+  {
+    "id": "dating_tip_114",
+    "text": "Be open about your availability rather than playing games with response times.",
+    "category": "Texting",
+    "colorIndex": 5
+  },
+  {
+    "id": "dating_tip_115",
+    "text": "Avoid making major life decisions immediately following an intense emotional breakup.",
+    "category": "Breakups",
+    "colorIndex": 0
+  },
+  {
+    "id": "dating_tip_116",
+    "text": "Ask what made them laugh most this week to shift conversation into happy territory.",
+    "category": "Conversation",
+    "colorIndex": 1
+  },
+  {
+    "id": "dating_tip_117",
+    "text": "Send handwritten postcards across long distances as tangible tokens of love.",
+    "category": "Long Distance",
+    "colorIndex": 2
+  },
+  {
+    "id": "dating_tip_118",
+    "text": "Look for consistency between what they say online and how they act in person.",
+    "category": "Online Dating",
+    "colorIndex": 3
+  },
+  {
+    "id": "dating_tip_119",
+    "text": "A great relationship encourages both individuals to blossom independently.",
+    "category": "Healthy Relationships",
+    "colorIndex": 4
+  },
+  {
+    "id": "dating_tip_120",
+    "text": "Smile warmly when greeting your date to instantly put both of you at ease.",
+    "category": "First Date",
+    "colorIndex": 5
+  },
+  {
+    "id": "dating_tip_121",
+    "text": "State how you prefer to handle finances together as the partnership deepens.",
+    "category": "Boundaries",
+    "colorIndex": 0
+  },
+  {
+    "id": "dating_tip_122",
+    "text": "Use shared humor and inside jokes to deepen your romantic bond over time.",
+    "category": "Flirting",
+    "colorIndex": 1
+  },
+  {
+    "id": "dating_tip_123",
+    "text": "Focus on quality time where both of you disconnect from external distractions.",
+    "category": "Relationships",
+    "colorIndex": 2
+  },
+  {
+    "id": "dating_tip_124",
+    "text": "Ask about their favorite childhood memories to uncover formative moments.",
+    "category": "Emotional Connection",
+    "colorIndex": 3
+  },
+  {
+    "id": "dating_tip_125",
+    "text": "Check local community events for unique and memorable date ideas.",
+    "category": "Planning Dates",
+    "colorIndex": 4
+  },
+  {
+    "id": "dating_tip_126",
+    "text": "Trust your intuition; red flags are warnings, not challenges to overcome.",
+    "category": "Dating Safety",
+    "colorIndex": 5
+  },
+  {
+    "id": "dating_tip_127",
+    "text": "Do not be afraid to admit when you are nervous; authenticity is endearing.",
+    "category": "Confidence",
+    "colorIndex": 0
+  },
+  {
+    "id": "dating_tip_128",
+    "text": "Remember that tone can get lost in text messages, so use emojis thoughtfully.",
+    "category": "Texting",
+    "colorIndex": 1
+  },
+  {
+    "id": "dating_tip_129",
+    "text": "Lean on trusted friends and family when navigating the aftermath of a split.",
+    "category": "Breakups",
+    "colorIndex": 2
+  },
+  {
+    "id": "dating_tip_130",
+    "text": "Avoid interviewing your date; weave your questions naturally into organic stories.",
+    "category": "Conversation",
+    "colorIndex": 3
+  },
+  {
+    "id": "dating_tip_131",
+    "text": "Plan regular check-ins about long-term relocation goals for long-distance partners.",
+    "category": "Long Distance",
+    "colorIndex": 4
+  },
+  {
+    "id": "dating_tip_132",
+    "text": "Never send money or financial assistance to people you have only met online.",
+    "category": "Online Dating",
+    "colorIndex": 5
+  },
+  {
+    "id": "dating_tip_133",
+    "text": "Healthy conflict focuses on solving the problem together rather than defeating your partner.",
+    "category": "Healthy Relationships",
+    "colorIndex": 0
+  },
+  {
+    "id": "dating_tip_134",
+    "text": "Arrive on time for dates to show respect for the other person's schedule.",
+    "category": "First Date",
+    "colorIndex": 1
+  },
+  {
+    "id": "dating_tip_135",
+    "text": "Establish comfortable boundaries around meeting each other's friends and family.",
+    "category": "Boundaries",
+    "colorIndex": 2
+  },
+  {
+    "id": "dating_tip_136",
+    "text": "Complement their outfit or styling choice to make them feel special.",
+    "category": "Flirting",
+    "colorIndex": 3
+  },
+  {
+    "id": "dating_tip_137",
+    "text": "Hold hands when walking together to foster gentle romantic intimacy.",
+    "category": "Emotional Connection",
+    "colorIndex": 4
+  },
+  {
+    "id": "dating_tip_138",
+    "text": "Explore outdoor farmers markets for a casual and sensory date experience.",
+    "category": "Planning Dates",
+    "colorIndex": 5
+  },
+  {
+    "id": "dating_tip_139",
+    "text": "Remember that someone else's inability to appreciate you does not diminish your value.",
+    "category": "Confidence",
+    "colorIndex": 0
+  },
+  {
+    "id": "dating_tip_140",
+    "text": "Always have your own phone fully charged before stepping out on a date.",
+    "category": "Dating Safety",
+    "colorIndex": 1
+  },
+  {
+    "id": "dating_tip_141",
+    "text": "Send supportive messages before important meetings or stressful days.",
+    "category": "Texting",
+    "colorIndex": 2
+  },
+  {
+    "id": "dating_tip_142",
+    "text": "Allow yourself to fully process emotional closure without demanding answers from an ex.",
+    "category": "Breakups",
+    "colorIndex": 3
+  },
+  {
+    "id": "dating_tip_143",
+    "text": "Ask about their favorite books or podcasts to spark stimulating mental exchanges.",
+    "category": "Conversation",
+    "colorIndex": 4
+  },
+  {
+    "id": "dating_tip_144",
+    "text": "Sync up your favorite meals on video dates so you can 'dine together' across miles.",
+    "category": "Long Distance",
+    "colorIndex": 5
+  },
+  {
+    "id": "dating_tip_145",
+    "text": "Video chat before meeting in person to confirm identity and build initial comfort.",
+    "category": "Online Dating",
+    "colorIndex": 0
+  },
+  {
+    "id": "dating_tip_146",
+    "text": "Celebrate each other's personal victories as if they were your own.",
+    "category": "Healthy Relationships",
+    "colorIndex": 1
+  },
+  {
+    "id": "dating_tip_147",
+    "text": "Pick a coffee shop with comfortable seating and moderate background noise.",
+    "category": "First Date",
+    "colorIndex": 2
+  },
+  {
+    "id": "dating_tip_148",
+    "text": "Speak up promptly if a conversation topic or action makes you uncomfortable.",
+    "category": "Boundaries",
+    "colorIndex": 3
+  },
+  {
+    "id": "dating_tip_149",
+    "text": "Maintain a playful gaze across the table to build delightful romantic anticipation.",
+    "category": "Flirting",
+    "colorIndex": 4
+  },
+  {
+    "id": "dating_tip_150",
+    "text": "Share your hopes and dreams for the future to test long-term alignment.",
+    "category": "Emotional Connection",
+    "colorIndex": 5
+  },
+  {
+    "id": "dating_tip_151",
+    "text": "Consider an arcade or board game cafe for fun, interactive date energy.",
+    "category": "Planning Dates",
+    "colorIndex": 0
+  },
+  {
+    "id": "dating_tip_152",
+    "text": "Confidence is quiet; you do not need to brag about accomplishments to impress.",
+    "category": "Confidence",
+    "colorIndex": 1
+  },
+  {
+    "id": "dating_tip_153",
+    "text": "Share your live location with a trusted friend during a first meetup.",
+    "category": "Dating Safety",
+    "colorIndex": 2
+  },
+  {
+    "id": "dating_tip_154",
+    "text": "Send sweet morning greetings to let them know they are on your mind.",
+    "category": "Texting",
+    "colorIndex": 3
+  },
+  {
+    "id": "dating_tip_155",
+    "text": "Channel your post-breakup energy into personal growth and exciting new hobbies.",
+    "category": "Breakups",
+    "colorIndex": 4
+  },
+  {
+    "id": "dating_tip_156",
+    "text": "Ask what lessons have shaped their character the most over the past few years.",
+    "category": "Conversation",
+    "colorIndex": 5
+  },
+  {
+    "id": "dating_tip_157",
+    "text": "Set a clear deadline for when the long-distance phase of your relationship will conclude.",
+    "category": "Long Distance",
+    "colorIndex": 0
+  },
+  {
+    "id": "dating_tip_158",
+    "text": "Keep your dating profile focused on what you are looking for rather than what you dislike.",
+    "category": "Online Dating",
+    "colorIndex": 1
+  },
+  {
+    "id": "dating_tip_159",
+    "text": "Practice daily acts of kindness to keep affection alive in long-term relationships.",
+    "category": "Healthy Relationships",
+    "colorIndex": 2
+  },
+  {
+    "id": "dating_tip_160",
+    "text": "Be gracious and polite even if you realize early on there is no romantic spark.",
+    "category": "First Date",
+    "colorIndex": 3
+  },
+  {
+    "id": "dating_tip_161",
+    "text": "Communicate your need for alone time without making your partner feel rejected.",
+    "category": "Boundaries",
+    "colorIndex": 4
+  },
+  {
+    "id": "dating_tip_162",
+    "text": "Lean in slightly when they are talking to show genuine intrigue and focus.",
+    "category": "Flirting",
+    "colorIndex": 5
+  },
+  {
+    "id": "dating_tip_163",
+    "text": "Express reassurance verbally so your partner feels secure in your affection.",
+    "category": "Emotional Connection",
+    "colorIndex": 0
+  },
+  {
+    "id": "dating_tip_164",
+    "text": "Try stargazing or an evening picnic for a calm, romantic atmosphere.",
+    "category": "Planning Dates",
+    "colorIndex": 1
+  },
+  {
+    "id": "dating_tip_165",
+    "text": "Embrace your quirks; the right person will find your eccentricities charming.",
+    "category": "Confidence",
+    "colorIndex": 2
+  },
+  {
+    "id": "dating_tip_166",
+    "text": "Stay in public areas and do not leave with someone you just met.",
+    "category": "Dating Safety",
+    "colorIndex": 3
+  },
+  {
+    "id": "dating_tip_167",
+    "text": "Avoid sending cryptic one-word texts when you are feeling upset.",
+    "category": "Texting",
+    "colorIndex": 4
+  },
+  {
+    "id": "dating_tip_168",
+    "text": "Forgive yourself for mistakes made in past relationships; growth is what matters.",
+    "category": "Breakups",
+    "colorIndex": 5
+  },
+  {
+    "id": "dating_tip_169",
+    "text": "Ask about their favorite travel experiences to inspire vivid, exciting storytelling.",
+    "category": "Conversation",
+    "colorIndex": 0
+  },
+  {
+    "id": "dating_tip_170",
+    "text": "Create shared online photo albums to document long-distance memories together.",
+    "category": "Long Distance",
+    "colorIndex": 1
+  },
+  {
+    "id": "dating_tip_171",
+    "text": "Be genuine in your prompts rather than using generic or cliché pickup lines.",
+    "category": "Online Dating",
+    "colorIndex": 2
+  },
+  {
+    "id": "dating_tip_172",
+    "text": "Make joint decisions with openness and mutual compromise rather than stubbornness.",
+    "category": "Healthy Relationships",
+    "colorIndex": 3
+  },
+  {
+    "id": "dating_tip_173",
+    "text": "Thank your date for their company when parting at the end of the evening.",
+    "category": "First Date",
+    "colorIndex": 4
+  },
+  {
+    "id": "dating_tip_174",
+    "text": "Stand firm on your non-negotiables regarding honesty, loyalty, and respect.",
+    "category": "Boundaries",
+    "colorIndex": 5
+  },
+  {
+    "id": "dating_tip_175",
+    "text": "A well-timed, witty callback to something they mentioned earlier shows you listened.",
+    "category": "Flirting",
+    "colorIndex": 0
+  },
+  {
+    "id": "dating_tip_176",
+    "text": "Check in on their emotional battery after they have had an exhausting day.",
+    "category": "Emotional Connection",
+    "colorIndex": 1
+  },
+  {
+    "id": "dating_tip_177",
+    "text": "Visit an art gallery or museum for built-in visual conversation starters.",
+    "category": "Planning Dates",
+    "colorIndex": 2
+  },
+  {
+    "id": "dating_tip_178",
+    "text": "Walk into every date with curiosity about who they are rather than anxiety about yourself.",
+    "category": "Confidence",
+    "colorIndex": 3
+  },
+  {
+    "id": "dating_tip_179",
+    "text": "Keep enough personal funds for your own ride home under any circumstances.",
+    "category": "Dating Safety",
+    "colorIndex": 4
+  },
+  {
+    "id": "dating_tip_180",
+    "text": "Respond with thoughtful paragraphs when they share something meaningful over text.",
+    "category": "Texting",
+    "colorIndex": 5
+  },
+  {
+    "id": "dating_tip_181",
+    "text": "Give yourself grace; healing from heartbreak is rarely a linear journey.",
+    "category": "Breakups",
+    "colorIndex": 0
+  },
+  {
+    "id": "dating_tip_182",
+    "text": "Inquire about the people who inspire them most in their life or career.",
+    "category": "Conversation",
+    "colorIndex": 1
+  },
+  {
+    "id": "dating_tip_183",
+    "text": "Send surprise voice messages before they wake up across different time zones.",
+    "category": "Long Distance",
+    "colorIndex": 2
+  },
+  {
+    "id": "dating_tip_184",
+    "text": "Ask meaningful questions early in app chats to filter for real compatibility.",
+    "category": "Online Dating",
+    "colorIndex": 3
+  },
+  {
+    "id": "dating_tip_185",
+    "text": "A strong partnership gives both people safety to be completely authentic.",
+    "category": "Healthy Relationships",
+    "colorIndex": 4
+  },
+  {
+    "id": "dating_tip_186",
+    "text": "Keep your first date outfit true to your personal style so you feel at ease.",
+    "category": "First Date",
+    "colorIndex": 5
+  },
+  {
+    "id": "dating_tip_187",
+    "text": "Discuss how you both handle stress so you can support each other appropriately.",
+    "category": "Boundaries",
+    "colorIndex": 0
+  },
+  {
+    "id": "dating_tip_188",
+    "text": "Tease them gently about their favorite guilty pleasure movies or songs.",
+    "category": "Flirting",
+    "colorIndex": 1
+  },
+  {
+    "id": "dating_tip_189",
+    "text": "Remind your partner why you chose them during stressful seasons of life.",
+    "category": "Emotional Connection",
+    "colorIndex": 2
+  },
+  {
+    "id": "dating_tip_190",
+    "text": "Cook a meal together at home once comfortable to test teamwork and chemistry.",
+    "category": "Planning Dates",
+    "colorIndex": 3
+  },
+  {
+    "id": "dating_tip_191",
+    "text": "Remember that asking for what you need is healthy communication, not being needy.",
+    "category": "Confidence",
+    "colorIndex": 4
+  },
+  {
+    "id": "dating_tip_192",
+    "text": "Never feel obligated to stay on a date where your safety or dignity is compromised.",
+    "category": "Dating Safety",
+    "colorIndex": 5
+  },
+  {
+    "id": "dating_tip_193",
+    "text": "Keep texting balanced; let conversations breathe naturally when both are busy.",
+    "category": "Texting",
+    "colorIndex": 0
+  },
+  {
+    "id": "dating_tip_194",
+    "text": "Look back on past relationships as stepping stones toward greater self-awareness.",
+    "category": "Breakups",
+    "colorIndex": 1
+  },
+  {
+    "id": "dating_tip_195",
+    "text": "Ask what dream they are currently working hardest to achieve.",
+    "category": "Conversation",
+    "colorIndex": 2
+  },
+  {
+    "id": "dating_tip_196",
+    "text": "Surprise them with a scheduled virtual date night complete with dress-up attire.",
+    "category": "Long Distance",
+    "colorIndex": 3
+  },
+  {
+    "id": "dating_tip_197",
+    "text": "Be clear about your relationship goals on your profile to attract aligned matches.",
+    "category": "Online Dating",
+    "colorIndex": 4
+  },
+  {
+    "id": "dating_tip_198",
+    "text": "Practice active listening and unconditional support as daily relational habits.",
+    "category": "Healthy Relationships",
+    "colorIndex": 5
+  },
+  {
+    "id": "dating_tip_199",
+    "text": "Remember that finding the right match takes patience, optimism, and genuine self-worth.",
+    "category": "Confidence",
+    "colorIndex": 0
+  },
+  {
+    "id": "dating_tip_200",
+    "text": "End every great date with clear confirmation that you would love to see them again.",
+    "category": "First Date",
+    "colorIndex": 1
+  }
+]

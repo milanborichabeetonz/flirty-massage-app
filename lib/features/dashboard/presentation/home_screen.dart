@@ -70,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.lightBlueAccent,
-        title: Text("pickup lines"),
+        title: const Text("pickup lines"),
         actions: [
           Row(
             children: [
@@ -80,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: ((context) => FavoriteScreen())),
+                    MaterialPageRoute(builder: ((context) => const FavoriteScreen())),
                   );
                 },
                 iconColor: Colors.white,
@@ -89,12 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
               // ------------------------ premium iconButton ------------------------------------- //
               HeaderIconButton(
                 icon: Icons.workspace_premium,
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: ((context) => PremiumScreen())),
-                  );
-                },
+                onPressed: () => showPremiumDialog(context),
                 iconColor: Colors.yellowAccent,
               ),
               // ------------------------ setting iconButton ------------------------------------- //
@@ -103,34 +98,38 @@ class _HomeScreenState extends State<HomeScreen> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: ((context) => SettingScreen())),
+                    MaterialPageRoute(builder: ((context) => const SettingScreen())),
                   );
                 },
                 iconColor: Colors.white,
               ),
-              SizedBox(width: 20),
+              const SizedBox(width: 20),
             ],
           ),
         ],
       ),
       body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.all(10),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(10),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // ------------------------------------------- PickupLineCard ----------------------------------------
-              SizedBox(
+              const SizedBox(
                 height: 200,
                 width: double.infinity,
                 child: PickupLineCard(), // pickup line
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
+
               //------------------------------------------ AiWingmanCard -------------------------------------------------------
-              SizedBox(
+              const SizedBox(
                 height: 150,
                 width: double.infinity,
                 child: AiWingmanCard(),
               ),
+              const SizedBox(height: 10),
+
               //---------------------------------------------- Quick use --------------------------------------------
               Container(
                 height: 150,
@@ -138,8 +137,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15),
                 ),
-                child: QuickUseButton(),
+                child: const QuickUseButton(),
               ),
+              const SizedBox(height: 10),
+
               //-------------------------------------------------------- Category -------------------------------------------
               SizedBox(
                 width: double.infinity,
@@ -147,7 +148,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    CostumeTextWidget(
+                    const CostumeTextWidget(
                       text: 'Category',
                       color: Colors.black,
                       size: 20,
@@ -159,22 +160,27 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               ),
-              // --------------------------------------  show all  category ------------------------------------
-              Expanded(
-                child: FutureBuilder<List<PickupLineModel>>(
-                  future: _pickupLinesFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
 
-                    if (snapshot.hasError) {
-                      return Center(
+              // --------------------------------------  show all category ------------------------------------
+              FutureBuilder<List<PickupLineModel>>(
+                future: _pickupLinesFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const SizedBox(
+                      height: 110,
+                      child: Center(child: CircularProgressIndicator()),
+                    );
+                  }
+
+                  if (snapshot.hasError) {
+                    return SizedBox(
+                      height: 110,
+                      child: Center(
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             const Text('Unable to load categories.'),
-                            const SizedBox(height: 10),
+                            const SizedBox(height: 6),
                             ElevatedButton(
                               onPressed: () {
                                 setState(() {
@@ -186,14 +192,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ],
                         ),
-                      );
-                    }
+                      ),
+                    );
+                  }
 
-                    final pickupLines =
-                        snapshot.data ?? const <PickupLineModel>[];
-                    return AllCategoryTabs(pickupLines: pickupLines);
-                  },
-                ),
+                  final pickupLines =
+                      snapshot.data ?? const <PickupLineModel>[];
+                  return AllCategoryTabs(pickupLines: pickupLines);
+                },
               ),
             ],
           ),
@@ -203,10 +209,10 @@ class _HomeScreenState extends State<HomeScreen> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => PickupLineMakerScreen()),
+            MaterialPageRoute(builder: (context) => const PickupLineMakerScreen()),
           );
         },
-        child: Icon(Icons.edit_note),
+        child: const Icon(Icons.edit_note),
       ),
     );
   }

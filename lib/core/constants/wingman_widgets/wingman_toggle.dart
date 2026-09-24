@@ -1,4 +1,3 @@
-import 'package:flirtymessages/core/widgets/costume_card/costume_card_widget.dart';
 import 'package:flirtymessages/core/widgets/costume_text/costume_text_widget.dart';
 import 'package:flutter/material.dart';
 

@@ -32,7 +32,7 @@ class _ReplyCardState extends State<ReplyCard> {
   }
 
   void _shareMessage() {
-    Share.share(_currentMessage);
+    SharePlus.instance.share(ShareParams(text: _currentMessage));
   }
 
   void _editMessage() {
@@ -138,9 +138,9 @@ class _ActionButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: color.withOpacity(0.3)),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,

@@ -1,19 +1,18 @@
 import 'dart:io';
-import 'dart:typed_data';
-import 'dart:ui' as ui;
 
+import 'package:flirtymessages/core/services/image_download_service.dart';
 import 'package:flirtymessages/core/widgets/costume_text/costume_text_widget.dart';
 import 'package:flirtymessages/core/widgets/custom_button_widget.dart';
 import 'package:flirtymessages/core/widgets/edit_text_botton_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 
 import '../../core/constants/line_text_maker_widget/pickup_line_preview_widget.dart';
 
 class PickupLineMakerScreen extends StatefulWidget {
-  const PickupLineMakerScreen({super.key});
+  const PickupLineMakerScreen({super.key, this.initialText});
+
+  final String? initialText;
 
   @override
   State<PickupLineMakerScreen> createState() => _PickupLineMakerScreenState();
@@ -25,10 +24,20 @@ class _PickupLineMakerScreenState extends State<PickupLineMakerScreen> {
   // ====================
   final GlobalKey _previewKey = GlobalKey();
 
+  bool _isDownloading = false;
+
   // ====================
   //  Text controller
   // ====================
   final TextEditingController _textController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialText != null && widget.initialText!.isNotEmpty) {
+      _textController.text = widget.initialText!;
+    }
+  }
 
   // ====================
   //  Text styling
@@ -1369,30 +1378,130 @@ class _PickupLineMakerScreenState extends State<PickupLineMakerScreen> {
   }
 
   // ============================================================
-  //  E. DOWNLOAD — RepaintBoundary + path_provider
+  //  E. DOWNLOAD — Format picker + gallery save (via service)
   // ============================================================
-  Future<void> _downloadImage() async {
+  Future<void> _onDownloadTapped() async {
+    if (_isDownloading) return;
+    FocusScope.of(context).unfocus();
+    final format = await _showFormatPicker();
+    if (format == null || !mounted) return;
+    await _executeDownload(format);
+  }
+
+  Future<ImageExportFormat?> _showFormatPicker() {
+    return showModalBottomSheet<ImageExportFormat>(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(24),
+          topRight: Radius.circular(24),
+        ),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 4),
+                const Text(
+                  'Choose Image Format',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF222222),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _FormatTile(
+                        title: 'PNG',
+                        subtitle: 'Lossless, supports transparency',
+                        icon: Icons.image_outlined,
+                        onTap: () => Navigator.pop(
+                            context, ImageExportFormat.png),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _FormatTile(
+                        title: 'JPEG',
+                        subtitle: 'Smaller file, great quality',
+                        icon: Icons.photo_outlined,
+                        onTap: () => Navigator.pop(
+                            context, ImageExportFormat.jpeg),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _executeDownload(ImageExportFormat format) async {
+    setState(() => _isDownloading = true);
     try {
-      final RenderRepaintBoundary boundary = _previewKey.currentContext!
-          .findRenderObject()! as RenderRepaintBoundary;
-      final image = await boundary.toImage(pixelRatio: 3.0);
-      final ByteData? byteData =
-          await image.toByteData(format: ui.ImageByteFormat.png);
-      final Uint8List pngBytes = byteData!.buffer.asUint8List();
-      final dir = await getTemporaryDirectory();
-      final file = File(
-          '${dir.path}/pickup_line_${DateTime.now().millisecondsSinceEpoch}.png');
-      await file.writeAsBytes(pngBytes);
+      final result = await ImageDownloadService.downloadCard(
+        _previewKey,
+        format: format,
+      );
+      if (!mounted) return;
+      final message = result.success
+          ? 'Saved to Gallery'
+          : (result.userMessage ?? 'Unable to save image');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Row(
+            children: [
+              Icon(
+                result.success
+                    ? Icons.check_circle_outline
+                    : Icons.error_outline,
+                color: Colors.white,
+                size: 18,
+              ),
+              const SizedBox(width: 8),
+              Expanded(child: Text(message)),
+            ],
+          ),
+          backgroundColor: result.success
+              ? const Color(0xFF10B981)
+              : const Color(0xFFEF4444),
+        ),
+      );
+    } catch (e) {
+      debugPrint('[PickupLineMaker] Download error: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Saved to: ${file.path}')),
+          const SnackBar(
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Color(0xFFEF4444),
+            content: Row(
+              children: [
+                Icon(Icons.error_outline,
+                    color: Colors.white, size: 18),
+                SizedBox(width: 8),
+                Expanded(child: Text('Unable to save image')),
+              ],
+            ),
+          ),
         );
       }
-    } catch (e) {
+    } finally {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Download failed: $e')),
-        );
+        setState(() => _isDownloading = false);
       }
     }
   }
@@ -1418,8 +1527,19 @@ class _PickupLineMakerScreenState extends State<PickupLineMakerScreen> {
           Padding(
             padding: const EdgeInsets.only(right: 10),
             child: IconButton(
-              onPressed: _downloadImage,
-              icon: const Icon(Icons.download, size: 30),
+              onPressed: _isDownloading ? null : _onDownloadTapped,
+              icon: _isDownloading
+                  ? const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.5,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                            Color(0xFF7C3AED)),
+                      ),
+                    )
+                  : const Icon(Icons.download, size: 30),
+              tooltip: _isDownloading ? 'Downloading...' : 'Download',
             ),
           ),
         ],
@@ -1428,9 +1548,10 @@ class _PickupLineMakerScreenState extends State<PickupLineMakerScreen> {
         child: Column(
           children: [
             // F. Preview widget with all new params
-            RepaintBoundary(
-              key: _previewKey,
-              child: PickupLinePreviewWidget(
+            Expanded(
+              child: RepaintBoundary(
+                key: _previewKey,
+                child: PickupLinePreviewWidget(
                 controller: _textController,
                 backgroundColor: selectedColor,
                 gradientBackground: selectedGradient,
@@ -1466,6 +1587,7 @@ class _PickupLineMakerScreenState extends State<PickupLineMakerScreen> {
                 shadowBlur: shadowBlur,
                 backgroundOpacity: selectedOpacity,
               ),
+            ),
             ),
 
             // Editor tool bar
@@ -1531,6 +1653,80 @@ class _PickupLineMakerScreenState extends State<PickupLineMakerScreen> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _FormatTile extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final IconData icon;
+  final VoidCallback onTap;
+
+  const _FormatTile({
+    required this.title,
+    required this.subtitle,
+    required this.icon,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    const purple = Color(0xFF7C3AED);
+    return Material(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(16),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: purple.withValues(alpha: 0.2), width: 1.2),
+            color: purple.withValues(alpha: 0.04),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 38,
+                height: 38,
+                decoration: BoxDecoration(
+                  color: purple.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(icon, color: purple, size: 20),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF222222),
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: const TextStyle(
+                        fontSize: 11,
+                        color: Color(0xFF666666),
+                      ),
+                      maxLines: 2,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

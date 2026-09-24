@@ -102,85 +102,83 @@ class PickupLinePreviewWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        width: double.infinity,
-        color: Colors.white,
-        child: Padding(
-          padding: previewPadding,
-          child: Container(
-            decoration: _resolveDecoration(),
-            child: Card(
-              color: Colors.transparent,
-              elevation: 0,
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Stack(
-                    children: [
-                      if (hasBorder)
-                        Positioned.fill(
-                          child: IgnorePointer(
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: ValueListenableBuilder(
-                                valueListenable: controller!,
-                                builder: (context, value, _) {
-                                  return Text(
-                                    value.text,
-                                    textAlign: textAlign,
-                                    style: TextStyle(
-                                      fontSize: fontSize,
-                                      fontFamily: fontFamily,
-                                      letterSpacing: latterSpacing,
-                                      fontWeight: fontWeight,
-                                      fontStyle: fontStyle,
-                                      foreground: Paint()
-                                        ..style = PaintingStyle.stroke
-                                        ..strokeWidth = borderWidth
-                                        ..color = borderColor,
-                                    ),
-                                  );
-                                },
-                              ),
+    return Container(
+      width: double.infinity,
+      color: Colors.white,
+      child: Padding(
+        padding: previewPadding,
+        child: Container(
+          decoration: _resolveDecoration(),
+          child: Card(
+            color: Colors.transparent,
+            elevation: 0,
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Stack(
+                  children: [
+                    if (hasBorder)
+                      Positioned.fill(
+                        child: IgnorePointer(
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: ValueListenableBuilder(
+                              valueListenable: controller!,
+                              builder: (context, value, _) {
+                                return Text(
+                                  value.text,
+                                  textAlign: textAlign,
+                                  style: TextStyle(
+                                    fontSize: fontSize,
+                                    fontFamily: fontFamily,
+                                    letterSpacing: latterSpacing,
+                                    fontWeight: fontWeight,
+                                    fontStyle: fontStyle,
+                                    foreground: Paint()
+                                      ..style = PaintingStyle.stroke
+                                      ..strokeWidth = borderWidth
+                                      ..color = borderColor,
+                                  ),
+                                );
+                              },
                             ),
                           ),
                         ),
-                      TextField(
-                        controller: controller,
-                        maxLines: null,
-                        expands: true,
-                        textAlign: textAlign,
-                        textAlignVertical: TextAlignVertical.center,
-                        style: TextStyle(
-                          fontSize: fontSize,
-                          height: lineHeight,
-                          letterSpacing: latterSpacing,
-                          fontFamily: fontFamily,
-                          color: textColor,
-                          fontWeight: fontWeight,
-                          fontStyle: fontStyle,
-                          decoration: textDecoration,
-                          shadows: hasShadow
-                              ? [
-                                  Shadow(
-                                    color: shadowColor,
-                                    blurRadius: shadowBlur,
-                                    offset: Offset(shadowOffsetX, shadowOffsetY),
-                                  ),
-                                ]
-                              : [],
-                        ),
-                        decoration: const InputDecoration(
-                          hintText: "Type Here...",
-                          hintStyle: TextStyle(fontSize: 20),
-                          border: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                        ),
                       ),
-                    ],
-                  ),
+                    TextField(
+                      controller: controller,
+                      maxLines: null,
+                      expands: true,
+                      textAlign: textAlign,
+                      textAlignVertical: TextAlignVertical.center,
+                      style: TextStyle(
+                        fontSize: fontSize,
+                        height: lineHeight,
+                        letterSpacing: latterSpacing,
+                        fontFamily: fontFamily,
+                        color: textColor,
+                        fontWeight: fontWeight,
+                        fontStyle: fontStyle,
+                        decoration: textDecoration,
+                        shadows: hasShadow
+                            ? [
+                                Shadow(
+                                  color: shadowColor,
+                                  blurRadius: shadowBlur,
+                                  offset: Offset(shadowOffsetX, shadowOffsetY),
+                                ),
+                              ]
+                            : [],
+                      ),
+                      decoration: const InputDecoration(
+                        hintText: "Type Here...",
+                        hintStyle: TextStyle(fontSize: 20),
+                        border: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),

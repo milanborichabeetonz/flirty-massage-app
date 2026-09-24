@@ -57,70 +57,90 @@ List<CategorySummary> buildCategorySummaries(
 }
 
 class CategoryTile extends StatelessWidget {
-  const CategoryTile({super.key, required this.category, required this.onTap});
+  const CategoryTile({
+    super.key,
+    required this.category,
+    required this.onTap,
+    this.width,
+    this.height,
+  });
 
   final CategorySummary category;
   final VoidCallback onTap;
+  final double? width;
+  final double? height;
 
   @override
   Widget build(BuildContext context) {
-    return Material(
+    final card = Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(18),
         child: Ink(
+          padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: category.backgroundColor,
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(18),
             border: Border.all(
               color: category.accentColor.withValues(alpha: 0.18),
             ),
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(14),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: 52,
-                  height: 52,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.85),
-                    borderRadius: BorderRadius.circular(18),
-                  ),
-                  child: Icon(
-                    category.icon,
-                    color: category.accentColor,
-                    size: 26,
-                  ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                width: 38,
+                height: 38,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.85),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                const Spacer(),
-                Text(
-                  category.displayName,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF222222),
-                  ),
+                child: Icon(
+                  category.icon,
+                  color: category.accentColor,
+                  size: 20,
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  '${category.itemCount} pickup lines',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: category.accentColor,
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    category.displayName,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF222222),
+                    ),
                   ),
-                ),
-              ],
-            ),
+                  const SizedBox(height: 2),
+                  Text(
+                    '${category.itemCount} lines',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w500,
+                      color: category.accentColor,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),
     );
+
+    if (width != null || height != null) {
+      return SizedBox(
+        width: width,
+        height: height,
+        child: card,
+      );
+    }
+    return card;
   }
 }
 

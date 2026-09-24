@@ -17,6 +17,7 @@ class _WingmanScreenState extends State<WingmanScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: Column(
           children: [
@@ -24,7 +25,7 @@ class _WingmanScreenState extends State<WingmanScreen> {
             Container(
               height: 200,
               width: double.infinity,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Colors.pink,
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(25),
@@ -35,7 +36,7 @@ class _WingmanScreenState extends State<WingmanScreen> {
                 padding: const EdgeInsets.only(top: 25),
                 child: Column(
                   children: [
-                    CostumeTextWidget(
+                    const CostumeTextWidget(
                       text:
                           'Your AI Wingman \nAlways Know What to say \nwhat to say',
                       color: Colors.white,
@@ -44,7 +45,7 @@ class _WingmanScreenState extends State<WingmanScreen> {
                     ),
                     CostumeTextWidget(
                       text: "screenshort in. Smooth replies",
-                      color: Colors.white.withOpacity(0.7),
+                      color: Colors.white.withValues(alpha: 0.7),
                       size: 15,
                     ),
                   ],
@@ -64,7 +65,7 @@ class _WingmanScreenState extends State<WingmanScreen> {
                        });
                      },
                    ),
-                    Flexible(
+                    Expanded(
                       child: isScreenshotAnalyzer
                           ? const ScreenshortAnalyzerView()
                           : const PersonalizedOpenersView(),

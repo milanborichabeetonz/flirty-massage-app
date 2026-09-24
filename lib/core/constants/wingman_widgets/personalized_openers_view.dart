@@ -2,7 +2,16 @@ import 'package:flutter/material.dart';
 import 'opener_chat_screen.dart';
 
 class PersonalizedOpenersView extends StatefulWidget {
-  const PersonalizedOpenersView({super.key});
+  const PersonalizedOpenersView({
+    super.key,
+    this.initialRecipientName,
+    this.initialCategory,
+    this.initialTone,
+  });
+
+  final String? initialRecipientName;
+  final String? initialCategory;
+  final String? initialTone;
 
   @override
   State<PersonalizedOpenersView> createState() =>
@@ -46,6 +55,25 @@ class _PersonalizedOpenersViewState extends State<PersonalizedOpenersView> {
     'Ava',
     'Isabella',
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialRecipientName != null &&
+        widget.initialRecipientName!.isNotEmpty) {
+      _nameController.text = widget.initialRecipientName!;
+    }
+    if (widget.initialTone != null && widget.initialTone!.isNotEmpty) {
+      _selectedTone = widget.initialTone!;
+    } else if (widget.initialCategory != null &&
+        widget.initialCategory!.isNotEmpty) {
+      final cat = widget.initialCategory!;
+      if (_tones.any((t) => t['label']!.toLowerCase() == cat.toLowerCase())) {
+        _selectedTone = _tones.firstWhere(
+            (t) => t['label']!.toLowerCase() == cat.toLowerCase())['label']!;
+      }
+    }
+  }
 
   @override
   void dispose() {

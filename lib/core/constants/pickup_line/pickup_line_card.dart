@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flirtymessages/core/controllers/favorite_controller.dart';
 import 'package:flirtymessages/core/widgets/header_icon_button.dart';
-import 'package:flirtymessages/features/favorite/favorite_screen.dart';
+import 'package:flirtymessages/features/pickup_line/pickup_line_maker_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
@@ -85,14 +86,40 @@ class _PickupLineCardState extends State<PickupLineCard> {
   }
 }
 
-class _PickupLineCarouselCard extends StatelessWidget {
+class _PickupLineCarouselCard extends StatefulWidget {
   const _PickupLineCarouselCard({required this.pickupLine});
 
   final PickupLineModel pickupLine;
 
   @override
+  State<_PickupLineCarouselCard> createState() =>
+      _PickupLineCarouselCardState();
+}
+
+class _PickupLineCarouselCardState extends State<_PickupLineCarouselCard> {
+  bool _isFavorite = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _isFavorite =
+        FavoriteController.to.isFavorite(widget.pickupLine.text);
+  }
+
+  void _toggleFavorite() {
+    FavoriteController.to.toggleFavorite(
+      widget.pickupLine.text,
+      category: widget.pickupLine.category,
+    );
+    setState(() {
+      _isFavorite =
+          FavoriteController.to.isFavorite(widget.pickupLine.text);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final gradient = _gradientForCategory(pickupLine.category);
+    final gradient = _gradientForCategory(widget.pickupLine.category);
 
     return Container(
       decoration: BoxDecoration(
@@ -140,7 +167,7 @@ class _PickupLineCarouselCard extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 40),
               child: Text(
-                pickupLine.text,
+                widget.pickupLine.text,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   color: Colors.white,
@@ -157,24 +184,22 @@ class _PickupLineCarouselCard extends StatelessWidget {
             child: Row(
               children: [
                 HeaderIconButton(
-                  icon: Icons.favorite_border,
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const FavoriteScreen(),
-                      ),
-                    );
-                  },
+                  icon: _isFavorite
+                      ? Icons.favorite
+                      : Icons.favorite_border,
+                  onPressed: _toggleFavorite,
                   iconColor: Colors.white,
                   iconSize: 24,
                 ),
                 HeaderIconButton(
                   icon: Icons.mode_edit_outlined,
                   onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Open a category to edit this line.'),
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => PickupLineMakerScreen(
+                          initialText: widget.pickupLine.text,
+                        ),
                       ),
                     );
                   },
@@ -185,7 +210,7 @@ class _PickupLineCarouselCard extends StatelessWidget {
                   icon: Icons.share_outlined,
                   onPressed: () {
                     SharePlus.instance.share(
-                      ShareParams(text: pickupLine.text),
+                      ShareParams(text: widget.pickupLine.text),
                     );
                   },
                   iconColor: Colors.white,
@@ -218,43 +243,29 @@ class _PickupLineListCardState extends State<_PickupLineListCard> {
   void initState() {
     super.initState();
     _currentText = widget.pickupLine.text;
+    // Initialize favorite state from global controller
+    _isFavorite = FavoriteController.to.isFavorite(widget.pickupLine.text);
   }
 
-  Future<void> _editMessage() async {
-    final controller = TextEditingController(text: _currentText);
+  // ── GLOBAL FAVORITE via GetX controller ──────────────────────
+  void _toggleFavorite() {
+    FavoriteController.to.toggleFavorite(
+      widget.pickupLine.text,
+      category: widget.pickupLine.category,
+    );
+    setState(() {
+      _isFavorite = FavoriteController.to.isFavorite(widget.pickupLine.text);
+    });
+  }
 
-    final updatedText = await showDialog<String>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Edit pickup line'),
-        content: TextField(
-          controller: controller,
-          maxLines: 5,
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            hintText: 'Edit your pickup line...',
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context, controller.text.trim()),
-            child: const Text('Save'),
-          ),
-        ],
+  // ── EDIT → navigate to PickupLineMakerScreen ─────────────────
+  void _editMessage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => PickupLineMakerScreen(initialText: _currentText),
       ),
     );
-
-    if (!mounted || updatedText == null || updatedText.isEmpty) {
-      return;
-    }
-
-    setState(() {
-      _currentText = updatedText;
-    });
   }
 
   void _copyMessage() {
@@ -274,12 +285,6 @@ class _PickupLineListCardState extends State<_PickupLineListCard> {
         ),
       ),
     );
-  }
-
-  void _toggleFavorite() {
-    setState(() {
-      _isFavorite = !_isFavorite;
-    });
   }
 
   @override

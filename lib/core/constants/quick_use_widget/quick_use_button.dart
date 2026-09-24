@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-
+import '../../../features/dating_tips/screens/dating_tips_screen.dart';
+import '../../../features/love_tester/screens/love_tester_screen.dart';
 import '../../widgets/costume_card/costume_card_widget.dart';
 import '../../widgets/costume_text/costume_text_widget.dart';
 
@@ -13,15 +14,21 @@ class QuickUseButton extends StatelessWidget {
         height: 100,
         width: double.infinity,
         decoration: BoxDecoration(
-            color: Colors.pinkAccent.withOpacity(0.5),
-            borderRadius: BorderRadius.circular(15)
+          color: Colors.pinkAccent.withValues(alpha: 0.5),
+          borderRadius: BorderRadius.circular(15),
         ),
         child: Row(
           children: [
-            // ------------------------------------ Dating types ----------------------------------
+            // ------------------------------------ Dating Tips ----------------------------------
             Expanded(
               child: CostumeCardWidget(
-                color: Colors.pinkAccent.withOpacity(0.4),
+                color: Colors.pinkAccent.withValues(alpha: 0.4),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const DatingTipsScreen(),
+                  ),
+                ),
                 child: Column(
                   children: [
                     CostumeTextWidget(
@@ -29,7 +36,7 @@ class QuickUseButton extends StatelessWidget {
                       color: Colors.black,
                       size: 12,
                     ),
-                    SizedBox(height: 15,),
+                    const SizedBox(height: 15),
                     Row(
                       children: [
                         CostumeTextWidget(
@@ -37,10 +44,10 @@ class QuickUseButton extends StatelessWidget {
                           color: Colors.black,
                           size: 12,
                         ),
-                        SizedBox(width: 40,),
-                        Icon(Icons.chevron_right)
+                        const SizedBox(width: 40),
+                        const Icon(Icons.chevron_right),
                       ],
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -48,7 +55,13 @@ class QuickUseButton extends StatelessWidget {
             // -------------------------------------- Love Tester -----------------------------------
             Expanded(
               child: CostumeCardWidget(
-                color: Colors.blueAccent.withOpacity(0.4),
+                color: Colors.blueAccent.withValues(alpha: 0.4),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const LoveTesterScreen(),
+                  ),
+                ),
                 child: Column(
                   children: [
                     CostumeTextWidget(
@@ -56,7 +69,7 @@ class QuickUseButton extends StatelessWidget {
                       color: Colors.black,
                       size: 12,
                     ),
-                    SizedBox(height: 15,),
+                    const SizedBox(height: 15),
                     Row(
                       children: [
                         CostumeTextWidget(
@@ -64,10 +77,10 @@ class QuickUseButton extends StatelessWidget {
                           color: Colors.black,
                           size: 12,
                         ),
-                        SizedBox(width: 40,),
-                        Icon(Icons.chevron_right)
+                        const SizedBox(width: 40),
+                        const Icon(Icons.chevron_right),
                       ],
-                    )
+                    ),
                   ],
                 ),
               ),
