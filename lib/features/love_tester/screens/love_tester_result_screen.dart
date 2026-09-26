@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../core/constants/wingman_widgets/opener_chat_screen.dart';
+import '../../../core/repositories/saved_content_repository.dart';
 import '../../dating_tips/screens/dating_tips_screen.dart';
 import '../models/love_test_result.dart';
 import '../widgets/love_score_card.dart';
@@ -19,6 +20,8 @@ class LoveTesterResultScreen extends StatefulWidget {
 class _LoveTesterResultScreenState extends State<LoveTesterResultScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _animController;
+  final SavedContentRepository _savedRepo = SavedContentRepository();
+  bool _isSaved = false;
 
   static const Color _purple = Color(0xFF7C3AED);
 
@@ -29,12 +32,55 @@ class _LoveTesterResultScreenState extends State<LoveTesterResultScreen>
       vsync: this,
       duration: const Duration(milliseconds: 1200),
     )..forward();
+    _checkSavedStatus();
   }
 
   @override
   void dispose() {
     _animController.dispose();
     super.dispose();
+  }
+
+  Future<void> _checkSavedStatus() async {
+    try {
+      final saved = await _savedRepo.isLoveTestSaved(widget.result);
+      if (mounted) setState(() => _isSaved = saved);
+    } catch (e) {
+      debugPrint('[LOVE TEST] Failed to check saved status: $e');
+    }
+  }
+
+  Future<void> _saveResult() async {
+    if (_isSaved) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Already saved'),
+          duration: Duration(seconds: 1),
+        ),
+      );
+      return;
+    }
+
+    try {
+      final isNew = await _savedRepo.saveOrUpdateLoveTest(widget.result);
+      if (!mounted) return;
+      setState(() => _isSaved = true);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(isNew ? 'Love test result saved' : 'Already saved'),
+          duration: const Duration(seconds: 1),
+        ),
+      );
+    } catch (e) {
+      debugPrint('[LOVE TEST] Failed to save result: $e');
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Unable to save love test result'),
+          duration: Duration(seconds: 1),
+        ),
+      );
+    }
   }
 
   void _shareResult() {
@@ -108,6 +154,16 @@ class _LoveTesterResultScreenState extends State<LoveTesterResultScreen>
           'Love Tester',
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
+        actions: [
+          IconButton(
+            tooltip: 'Save result',
+            onPressed: _saveResult,
+            icon: Icon(
+              _isSaved ? Icons.bookmark : Icons.bookmark_border,
+              color: Colors.black,
+            ),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 28),

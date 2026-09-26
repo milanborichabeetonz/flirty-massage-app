@@ -8,8 +8,8 @@ import '../../../core/network/models/pickup_line_model.dart';
 import '../../../core/network/services/pickup_line_service.dart';
 import '../../../core/widgets/costume_text/costume_text_widget.dart';
 import '../../../core/widgets/header_icon_button.dart';
-import '../../category/category_detail_screen.dart';
 import '../../category/category_search_screen.dart';
+import '../../category/category_unified_screen.dart';
 import '../../favorite/favorite_screen.dart';
 import '../../pickup_line/pickup_line_maker_screen.dart';
 import '../../premium/premium_screen.dart';
@@ -51,9 +51,8 @@ class _HomeScreenState extends State<HomeScreen> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => CategoryDetailScreen(
-            initialCategory: selectedCategory,
-            pickupLines: pickupLines,
+          builder: (context) => CategoryUnifiedScreen(
+            category: selectedCategory,
           ),
         ),
       );

@@ -1,8 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import '../../../features/ai_wingman/saved_screenshot_analyses_screen.dart';
 import '../../network/models/craft_message_response.dart';
 import '../../network/services/craft_message_service.dart';
+import '../../repositories/saved_content_repository.dart';
 import '../../widgets/costume_text/costume_text_widget.dart';
 import 'reply_card.dart';
 
@@ -18,11 +21,13 @@ class _ScreenshortAnalyzerViewState extends State<ScreenshortAnalyzerView> {
   File? selectedImage;
   String selectedTone = 'Funny';
   bool isLoading = false;
+  bool _isAnalysisSaved = false;
   CraftMessageResponse? response;
   String? errorMessage;
 
   // ---- Service (created once, not in build) ----
   final CraftMessageService _service = CraftMessageService();
+  final SavedContentRepository _savedRepo = SavedContentRepository();
   final ImagePicker _picker = ImagePicker();
 
   // ---- Tone options ----
@@ -44,6 +49,7 @@ class _ScreenshortAnalyzerViewState extends State<ScreenshortAnalyzerView> {
         selectedImage = File(picked.path);
         response = null;       // clear old response when new image selected
         errorMessage = null;
+        _isAnalysisSaved = false;
       });
     }
   }
@@ -54,7 +60,77 @@ class _ScreenshortAnalyzerViewState extends State<ScreenshortAnalyzerView> {
       selectedImage = null;
       response = null;
       errorMessage = null;
+      _isAnalysisSaved = false;
     });
+  }
+
+  /// Copies the picked screenshot from the image_picker temp directory into the
+  /// app documents directory so saved analyses keep their image after restarts.
+  /// The destination name is derived from the analysis id, so re-saving the same
+  /// analysis never duplicates the file.
+  Future<String?> _persistImage(String? tempPath, String analysisId) async {
+    if (tempPath == null) return null;
+    try {
+      final tempFile = File(tempPath);
+      if (!await tempFile.exists()) return null;
+
+      final dir = await getApplicationDocumentsDirectory();
+      final analysesDir = Directory('${dir.path}/screenshot_analyses');
+      if (!await analysesDir.exists()) {
+        await analysesDir.create(recursive: true);
+      }
+
+      final ext = tempPath.contains('.')
+          ? tempPath.split('.').last.toLowerCase()
+          : 'jpg';
+      final dest = File('${analysesDir.path}/$analysisId.$ext');
+      if (!await dest.exists()) {
+        await tempFile.copy(dest.path);
+      }
+      return dest.path;
+    } catch (e) {
+      debugPrint('[SAVED ANALYSIS] Failed to persist image: $e');
+      return null;
+    }
+  }
+
+  Future<void> _saveAnalysis() async {
+    if (response == null || response!.messages.isEmpty) return;
+
+    try {
+      final id = 'screenshot_${selectedImage?.path.hashCode}_$selectedTone';
+      final persistedPath = await _persistImage(selectedImage?.path, id);
+      final analysis = SavedScreenshotAnalysis(
+        id: id,
+        imagePath: persistedPath ?? selectedImage?.path,
+        tone: selectedTone,
+        timestamp: DateTime.now().toIso8601String(),
+        messages: response!.messages,
+        recipientName: response!.recipientName,
+        situation: response!.situation,
+        processingTime: response!.processingTime,
+      );
+
+      final isNew = await _savedRepo.saveOrUpdateScreenshotAnalysis(analysis);
+      if (!mounted) return;
+      setState(() => _isAnalysisSaved = true);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(isNew ? 'Analysis saved successfully' : 'Analysis updated'),
+          duration: const Duration(seconds: 1),
+        ),
+      );
+    } catch (e) {
+      debugPrint('[SAVED ANALYSIS] Failed to save analysis: $e');
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Unable to save analysis'),
+          duration: Duration(seconds: 1),
+        ),
+      );
+    }
   }
 
   // ---- Generate replies ----
@@ -68,6 +144,7 @@ class _ScreenshortAnalyzerViewState extends State<ScreenshortAnalyzerView> {
       isLoading = true;
       errorMessage = null;
       response = null;
+      _isAnalysisSaved = false;
     });
 
     try {
@@ -92,7 +169,6 @@ class _ScreenshortAnalyzerViewState extends State<ScreenshortAnalyzerView> {
     } catch (e) {
       if (!mounted) return;
       debugPrint('CraftMessageService error details: $e');
-      // Also show more specific error message to user based on error type
       setState(() {
         if (e.toString().contains('SocketException') || e.toString().contains('NetworkException')) {
           errorMessage = 'Network error. Please check your internet connection.';
@@ -101,7 +177,7 @@ class _ScreenshortAnalyzerViewState extends State<ScreenshortAnalyzerView> {
         } else if (e.toString().contains('TimeoutException')) {
           errorMessage = 'Request timed out. The server may be slow. Try again.';
         } else {
-          errorMessage = 'Error: ${e.toString()}'; // show real error during development
+          errorMessage = 'Something went wrong. Please try again.';
         }
         isLoading = false;
       });
@@ -112,12 +188,37 @@ class _ScreenshortAnalyzerViewState extends State<ScreenshortAnalyzerView> {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      color: Colors.pinkAccent.withOpacity(0.07),
+      color: Colors.pinkAccent.withValues(alpha: 0.07),
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // ---- Saved Analyses Header Button ----
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const SavedScreenshotAnalysesScreen(),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.bookmark_rounded, size: 18, color: Colors.pink),
+                label: const Text(
+                  'Saved Analyses',
+                  style: TextStyle(
+                    color: Colors.pink,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 4),
+
             // ---- SECTION 1: Upload Card ----
             _buildUploadCard(),
             const SizedBox(height: 16),
@@ -159,7 +260,7 @@ class _ScreenshortAnalyzerViewState extends State<ScreenshortAnalyzerView> {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.blue.withOpacity(0.1),
+                    color: Colors.blue.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: const Icon(Icons.file_upload_outlined, color: Colors.blue, size: 22),
@@ -213,14 +314,14 @@ class _ScreenshortAnalyzerViewState extends State<ScreenshortAnalyzerView> {
         width: double.infinity,
         height: 160,
         decoration: BoxDecoration(
-          color: Colors.blue.withOpacity(0.05),
+          color: Colors.blue.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.blue.withOpacity(0.3), width: 1.5, style: BorderStyle.solid),
+          border: Border.all(color: Colors.blue.withValues(alpha: 0.3), width: 1.5, style: BorderStyle.solid),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.add_photo_alternate_outlined, size: 48, color: Colors.blue.withOpacity(0.6)),
+            Icon(Icons.add_photo_alternate_outlined, size: 48, color: Colors.blue.withValues(alpha: 0.6)),
             const SizedBox(height: 8),
             CostumeTextWidget(
               text: 'Tap to upload a screenshot',
@@ -263,7 +364,7 @@ class _ScreenshortAnalyzerViewState extends State<ScreenshortAnalyzerView> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Colors.blue.withOpacity(0.85),
+                    color: Colors.blue.withValues(alpha: 0.85),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: const Row(
@@ -327,10 +428,10 @@ class _ScreenshortAnalyzerViewState extends State<ScreenshortAnalyzerView> {
                     duration: const Duration(milliseconds: 180),
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     decoration: BoxDecoration(
-                      color: isSelected ? toneColor : toneColor.withOpacity(0.08),
+                      color: isSelected ? toneColor : toneColor.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                        color: isSelected ? toneColor : toneColor.withOpacity(0.3),
+                        color: isSelected ? toneColor : toneColor.withValues(alpha: 0.3),
                         width: isSelected ? 2 : 1,
                       ),
                     ),
@@ -401,7 +502,7 @@ class _ScreenshortAnalyzerViewState extends State<ScreenshortAnalyzerView> {
         onPressed: isLoading ? null : _generateReplies,
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.pink,
-          disabledBackgroundColor: Colors.pink.withOpacity(0.4),
+          disabledBackgroundColor: Colors.pink.withValues(alpha: 0.4),
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           elevation: 4,
@@ -446,14 +547,30 @@ class _ScreenshortAnalyzerViewState extends State<ScreenshortAnalyzerView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Icon(Icons.auto_awesome, color: Colors.pink, size: 18),
-                    const SizedBox(width: 6),
-                    CostumeTextWidget(
-                      text: 'AI understood the conversation',
-                      color: Colors.pink,
-                      size: 13,
-                      fontWeight: FontWeight.bold,
+                    Row(
+                      children: [
+                        const Icon(Icons.auto_awesome, color: Colors.pink, size: 18),
+                        const SizedBox(width: 6),
+                        CostumeTextWidget(
+                          text: 'AI understood the conversation',
+                          color: Colors.pink,
+                          size: 13,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ],
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        _isAnalysisSaved
+                            ? Icons.bookmark_rounded
+                            : Icons.bookmark_border_rounded,
+                        color: Colors.pink,
+                      ),
+                      onPressed: _saveAnalysis,
+                      tooltip:
+                          _isAnalysisSaved ? 'Already saved' : 'Save Analysis',
                     ),
                   ],
                 ),

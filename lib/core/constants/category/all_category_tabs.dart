@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../features/category/category_detail_screen.dart';
-import '../../../features/category/category_pickup_lines_screen.dart';
+import '../../../features/category/category_unified_screen.dart';
 import '../../network/models/pickup_line_model.dart';
 import '../../network/services/pickup_line_service.dart';
 import 'category_tile.dart';
@@ -16,14 +15,13 @@ class AllCategoryTabs extends StatefulWidget {
 }
 
 class _AllCategoryTabsState extends State<AllCategoryTabs> {
-  final PickupLineService service = PickupLineService();
-
   @override
   Widget build(BuildContext context) {
     if (widget.pickupLines != null) {
       return _buildCategoryList(widget.pickupLines!);
     }
 
+    final service = PickupLineService();
     return FutureBuilder<List<PickupLineModel>>(
       future: service.fetchPickUpLines(),
       builder: (context, snapshot) {
@@ -79,75 +77,18 @@ class _AllCategoryTabsState extends State<AllCategoryTabs> {
             category: category,
             width: 135,
             height: 105,
-            onTap: () => _showCategoryOptions(context, category, pickupLines),
+            onTap: () => _openCategory(context, category.name),
           );
         },
       ),
     );
   }
 
-  void _showCategoryOptions(
-    BuildContext context,
-    CategorySummary category,
-    List<PickupLineModel> pickupLines,
-  ) {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (ctx) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                category.displayName,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF161616),
-                ),
-              ),
-              const SizedBox(height: 16),
-              ListTile(
-                leading: const Icon(Icons.list_rounded, color: Color(0xFF8E61E8)),
-                title: const Text('Browse pickup lines', style: TextStyle(fontWeight: FontWeight.w600)),
-                subtitle: Text('${category.itemCount} lines from our collection'),
-                onTap: () {
-                  Navigator.pop(ctx);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => CategoryDetailScreen(
-                        initialCategory: category.name,
-                        pickupLines: pickupLines,
-                      ),
-                    ),
-                  );
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.auto_awesome_rounded, color: Color(0xFF8E61E8)),
-                title: const Text('AI Generate', style: TextStyle(fontWeight: FontWeight.w600)),
-                subtitle: const Text('Generate fresh lines using AI'),
-                onTap: () {
-                  Navigator.pop(ctx);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => CategoryPickupLinesScreen(
-                        category: category.name,
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
-        ),
+  void _openCategory(BuildContext context, String categoryName) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => CategoryUnifiedScreen(category: categoryName),
       ),
     );
   }

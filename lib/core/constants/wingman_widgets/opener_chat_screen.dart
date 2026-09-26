@@ -2,7 +2,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
+import '../../../core/models/saved_chat_model.dart';
 import '../../../core/network/services/craft_message_service.dart';
+import '../../../core/repositories/personalized_chat_repository.dart';
+import '../../../core/widgets/exit_confirmation_dialog.dart';
 import '../../../core/widgets/follow_up_input_widget.dart';
 
 class OpenerChatScreen extends StatefulWidget {
@@ -10,6 +13,8 @@ class OpenerChatScreen extends StatefulWidget {
   final String interests;
   final String tone;
   final String userId;
+  final String? conversationId;
+  final List<Map<String, dynamic>>? initialChatHistory;
 
   const OpenerChatScreen({
     super.key,
@@ -17,6 +22,8 @@ class OpenerChatScreen extends StatefulWidget {
     required this.interests,
     required this.tone,
     required this.userId,
+    this.conversationId,
+    this.initialChatHistory,
   });
 
   @override
@@ -25,11 +32,14 @@ class OpenerChatScreen extends StatefulWidget {
 
 class _OpenerChatScreenState extends State<OpenerChatScreen> {
   final CraftMessageService _service = CraftMessageService();
+  final PersonalizedChatRepository _repository = PersonalizedChatRepository();
   final TextEditingController _followUpController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
+  late final String _conversationId;
   bool _isLoading = true;
   bool _isFollowUpLoading = false;
+  bool _isSaved = false;
   String? _errorMessage;
 
   // Chat history: list of maps with type: 'user_context' | 'user_message' | 'ai' | 'error'
@@ -38,7 +48,28 @@ class _OpenerChatScreenState extends State<OpenerChatScreen> {
   @override
   void initState() {
     super.initState();
-    _generateInitial();
+    _conversationId = widget.conversationId ??
+        'chat_${widget.name.trim().toLowerCase()}_${widget.userId}';
+    _checkSavedStatus();
+
+    if (widget.initialChatHistory != null &&
+        widget.initialChatHistory!.isNotEmpty) {
+      _chatHistory.addAll(
+        widget.initialChatHistory!
+            .map(SavedChatModel.normalizeHistoryItem),
+      );
+      _isLoading = false;
+    } else {
+      _generateInitial();
+    }
+  }
+
+  Future<void> _checkSavedStatus() async {
+    final saved = await _repository.isChatSaved(_conversationId);
+    if (!mounted) return;
+    setState(() {
+      _isSaved = saved;
+    });
   }
 
   @override
@@ -67,6 +98,60 @@ class _OpenerChatScreenState extends State<OpenerChatScreen> {
     }
   }
 
+  Future<void> _saveChat() async {
+    final hasContent = _chatHistory.any((item) =>
+        item['type'] == 'ai' || item['type'] == 'user_message');
+
+    if (!hasContent) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Nothing to save'),
+          duration: Duration(seconds: 1),
+        ),
+      );
+      return;
+    }
+
+    final model = SavedChatModel(
+      id: _conversationId,
+      name: widget.name,
+      interests: widget.interests,
+      tone: widget.tone,
+      userId: widget.userId,
+      updatedAt: DateTime.now().toIso8601String(),
+      chatHistory: _chatHistory,
+    );
+
+    final isNew = await _repository.saveOrUpdateChat(model);
+    if (!mounted) return;
+
+    setState(() {
+      _isSaved = true;
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(isNew ? 'Chat saved successfully' : 'Chat updated'),
+        duration: const Duration(seconds: 1),
+      ),
+    );
+  }
+
+  Future<void> _autoSyncIfSaved() async {
+    if (_isSaved) {
+      final model = SavedChatModel(
+        id: _conversationId,
+        name: widget.name,
+        interests: widget.interests,
+        tone: widget.tone,
+        userId: widget.userId,
+        updatedAt: DateTime.now().toIso8601String(),
+        chatHistory: _chatHistory,
+      );
+      await _repository.saveOrUpdateChat(model);
+    }
+  }
+
   Future<void> _generateInitial() async {
     setState(() {
       _isLoading = true;
@@ -90,10 +175,11 @@ class _OpenerChatScreenState extends State<OpenerChatScreen> {
         });
         _chatHistory.add({
           'type': 'ai',
-          'messages': result.messages,
+          'messages': List<String>.from(result.messages),
         });
         _isLoading = false;
       });
+      _autoSyncIfSaved();
     } catch (e) {
       if (!mounted) return;
       setState(() {
@@ -127,10 +213,14 @@ class _OpenerChatScreenState extends State<OpenerChatScreen> {
       );
       if (!mounted) return;
       setState(() {
-        _chatHistory.add({'type': 'ai', 'messages': result.messages});
+        _chatHistory.add({
+          'type': 'ai',
+          'messages': List<String>.from(result.messages),
+        });
         _isFollowUpLoading = false;
       });
       _scrollToBottom();
+      _autoSyncIfSaved();
     } catch (e) {
       if (!mounted) return;
       setState(() {
@@ -164,32 +254,48 @@ class _OpenerChatScreenState extends State<OpenerChatScreen> {
     );
   }
 
+  Future<void> _handleExit() async {
+    final shouldExit = await showExitConfirmationDialog(
+      context: context,
+      screenName: 'Personalized Openers',
+    );
+    if (shouldExit && mounted) {
+      Navigator.pop(context);
+    }
+  }
+
   void _shareMessage(String msg) => SharePlus.instance.share(ShareParams(text: msg));
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      backgroundColor: const Color(0xFFF3EEFF),
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(70),
-        child: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFF7C3AED), Color(0xFF9F67F0)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        _handleExit();
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        backgroundColor: const Color(0xFFF3EEFF),
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(70),
+          child: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFF7C3AED), Color(0xFF9F67F0)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
             ),
-          ),
-          child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              child: Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.white),
-                    onPressed: () => Navigator.pop(context),
-                  ),
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.arrow_back, color: Colors.white),
+                      onPressed: _handleExit,
+                    ),
                   Container(
                     width: 38,
                     height: 38,
@@ -204,23 +310,35 @@ class _OpenerChatScreenState extends State<OpenerChatScreen> {
                     ),
                   ),
                   const SizedBox(width: 10),
-                  const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Personalized Openers',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,
+                  const Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Personalized Openers',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                          ),
                         ),
-                      ),
-                      Text(
-                        'Powered by AI ✨',
-                        style: TextStyle(color: Colors.white70, fontSize: 11),
-                      ),
-                    ],
+                        Text(
+                          'Powered by AI ✨',
+                          style: TextStyle(color: Colors.white70, fontSize: 11),
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    tooltip: _isSaved ? 'Chat saved' : 'Save chat',
+                    icon: Icon(
+                      _isSaved
+                          ? Icons.bookmark_rounded
+                          : Icons.bookmark_border_rounded,
+                      color: Colors.white,
+                    ),
+                    onPressed: _saveChat,
                   ),
                 ],
               ),
@@ -293,9 +411,11 @@ class _OpenerChatScreenState extends State<OpenerChatScreen> {
                               return _buildUserMessageBubble(item);
                             } else if (item['type'] == 'ai') {
                               return _buildAiResponseCard(
-                                  item['messages'] as List<String>);
+                                  SavedChatModel.stringListFrom(
+                                      item['messages']));
                             } else if (item['type'] == 'error') {
-                              return _buildErrorItem(item['text'] as String);
+                              return _buildErrorItem(
+                                  item['text']?.toString() ?? '');
                             }
                             return const SizedBox.shrink();
                           },
@@ -318,6 +438,7 @@ class _OpenerChatScreenState extends State<OpenerChatScreen> {
           ],
         ),
       ),
+    ),
     );
   }
 
@@ -370,8 +491,8 @@ class _OpenerChatScreenState extends State<OpenerChatScreen> {
 
   // User follow-up bubble (right side, purple gradient)
   Widget _buildUserMessageBubble(Map<String, dynamic> item) {
-    final text = item['text'] as String?;
-    final imageFile = item['image'] as File?;
+    final text = item['text']?.toString();
+    final imageFile = item['image'] is File ? item['image'] as File : null;
 
     return Align(
       alignment: Alignment.centerRight,

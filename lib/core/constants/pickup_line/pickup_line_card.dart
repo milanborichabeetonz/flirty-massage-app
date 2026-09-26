@@ -4,10 +4,11 @@ import 'package:flirtymessages/core/widgets/header_icon_button.dart';
 import 'package:flirtymessages/features/pickup_line/pickup_line_maker_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:share_plus/share_plus.dart';
 
+import '../../services/pickup_line_share_service.dart';
 import '../../network/models/pickup_line_model.dart';
 import '../../network/services/pickup_line_service.dart';
+import '../../repositories/saved_content_repository.dart';
 
 enum PickupLineCardMode { carousel, list }
 
@@ -97,13 +98,26 @@ class _PickupLineCarouselCard extends StatefulWidget {
 }
 
 class _PickupLineCarouselCardState extends State<_PickupLineCarouselCard> {
+  final GlobalKey _cardKey = GlobalKey();
+  final SavedContentRepository _savedRepo = SavedContentRepository();
   bool _isFavorite = false;
+  bool _isSaved = false;
 
   @override
   void initState() {
     super.initState();
     _isFavorite =
         FavoriteController.to.isFavorite(widget.pickupLine.text);
+    _checkSavedStatus();
+  }
+
+  Future<void> _checkSavedStatus() async {
+    try {
+      final saved = await _savedRepo.isPickupLineSaved(widget.pickupLine.text);
+      if (mounted) setState(() => _isSaved = saved);
+    } catch (e) {
+      debugPrint('[SAVE] Failed to check saved pickup line: $e');
+    }
   }
 
   void _toggleFavorite() {
@@ -117,109 +131,158 @@ class _PickupLineCarouselCardState extends State<_PickupLineCarouselCard> {
     });
   }
 
+  Future<void> _toggleSaved() async {
+    final wasSaved = _isSaved;
+    setState(() => _isSaved = !wasSaved);
+    try {
+      if (wasSaved) {
+        await _savedRepo.removeSavedPickupLine(widget.pickupLine.text);
+      } else {
+        await _savedRepo.savePickupLine(
+          text: widget.pickupLine.text,
+          category: widget.pickupLine.category,
+        );
+      }
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(_isSaved ? 'Pickup line saved' : 'Removed from saved'),
+          duration: const Duration(seconds: 1),
+        ),
+      );
+    } catch (e) {
+      debugPrint('[SAVE] Failed to toggle saved pickup line: $e');
+      if (!mounted) return;
+      setState(() => _isSaved = wasSaved);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Unable to save pickup line'),
+          duration: Duration(seconds: 1),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final gradient = _gradientForCategory(widget.pickupLine.category);
 
-    return Container(
-      decoration: BoxDecoration(
-        gradient: gradient,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.12),
-            blurRadius: 16,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Stack(
-        children: [
-          Positioned(
-            left: 16,
-            top: 12,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.22),
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: const Text(
-                'Pickup Line of the Day',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 11,
+    return RepaintBoundary(
+      key: _cardKey,
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: gradient,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.12),
+              blurRadius: 16,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: Stack(
+          children: [
+            Positioned(
+              left: 16,
+              top: 12,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.black.withValues(alpha: 0.22),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: const Text(
+                  'Pickup Line of the Day',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 11,
+                  ),
                 ),
               ),
             ),
-          ),
-          Positioned(
-            left: 18,
-            top: 48,
-            child: Icon(
-              Icons.format_quote_rounded,
-              color: Colors.white.withValues(alpha: 0.92),
-              size: 34,
+            Positioned(
+              left: 18,
+              top: 48,
+              child: Icon(
+                Icons.format_quote_rounded,
+                color: Colors.white.withValues(alpha: 0.92),
+                size: 34,
+              ),
             ),
-          ),
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 40),
-              child: Text(
-                widget.pickupLine.text,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  height: 1.4,
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 40),
+                child: Text(
+                  widget.pickupLine.text,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    height: 1.4,
+                  ),
                 ),
               ),
             ),
-          ),
-          Positioned(
-            right: 10,
-            bottom: 6,
-            child: Row(
-              children: [
-                HeaderIconButton(
-                  icon: _isFavorite
-                      ? Icons.favorite
-                      : Icons.favorite_border,
-                  onPressed: _toggleFavorite,
-                  iconColor: Colors.white,
-                  iconSize: 24,
-                ),
-                HeaderIconButton(
-                  icon: Icons.mode_edit_outlined,
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => PickupLineMakerScreen(
-                          initialText: widget.pickupLine.text,
+            Positioned(
+              right: 10,
+              bottom: 6,
+              child: Row(
+                children: [
+                  HeaderIconButton(
+                    icon: _isFavorite
+                        ? Icons.favorite
+                        : Icons.favorite_border,
+                    onPressed: _toggleFavorite,
+                    iconColor: Colors.white,
+                    iconSize: 24,
+                  ),
+                  HeaderIconButton(
+                    icon: _isSaved
+                        ? Icons.bookmark
+                        : Icons.bookmark_border_rounded,
+                    onPressed: _toggleSaved,
+                    iconColor: Colors.white,
+                    iconSize: 24,
+                  ),
+                  HeaderIconButton(
+                    icon: Icons.mode_edit_outlined,
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => PickupLineMakerScreen(
+                            initialText: widget.pickupLine.text,
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                  iconColor: Colors.white,
-                  iconSize: 24,
-                ),
-                HeaderIconButton(
-                  icon: Icons.share_outlined,
-                  onPressed: () {
-                    SharePlus.instance.share(
-                      ShareParams(text: widget.pickupLine.text),
-                    );
-                  },
-                  iconColor: Colors.white,
-                  iconSize: 24,
-                ),
-              ],
+                      );
+                    },
+                    iconColor: Colors.white,
+                    iconSize: 24,
+                  ),
+                  GestureDetector(
+                    onTapDown: (details) {
+                      showPickupLineShareMenu(
+                        context: context,
+                        cardKey: _cardKey,
+                        pickupLineText: widget.pickupLine.text,
+                        tapPosition: details.globalPosition,
+                      );
+                    },
+                    child: HeaderIconButton(
+                      icon: Icons.share_outlined,
+                      onPressed: () {},
+                      iconColor: Colors.white,
+                      iconSize: 24,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -235,6 +298,8 @@ class _PickupLineListCard extends StatefulWidget {
 }
 
 class _PickupLineListCardState extends State<_PickupLineListCard> {
+  final GlobalKey _cardKey = GlobalKey();
+  final SavedContentRepository _savedRepo = SavedContentRepository();
   late String _currentText;
   bool _isSaved = false;
   bool _isFavorite = false;
@@ -243,8 +308,17 @@ class _PickupLineListCardState extends State<_PickupLineListCard> {
   void initState() {
     super.initState();
     _currentText = widget.pickupLine.text;
-    // Initialize favorite state from global controller
     _isFavorite = FavoriteController.to.isFavorite(widget.pickupLine.text);
+    _checkSavedStatus();
+  }
+
+  Future<void> _checkSavedStatus() async {
+    try {
+      final saved = await _savedRepo.isPickupLineSaved(_currentText);
+      if (mounted) setState(() => _isSaved = saved);
+    } catch (e) {
+      debugPrint('[SAVE] Failed to check saved pickup line: $e');
+    }
   }
 
   // ── GLOBAL FAVORITE via GetX controller ──────────────────────
@@ -274,133 +348,167 @@ class _PickupLineListCardState extends State<_PickupLineListCard> {
         .showSnackBar(const SnackBar(content: Text('Pickup line copied!')));
   }
 
-  void _saveMessage() {
-    setState(() {
-      _isSaved = !_isSaved;
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          _isSaved ? 'Saved for later.' : 'Removed from saved list.',
+  // ── SAVE via common local Save/Store repository ──────────────
+  Future<void> _saveMessage() async {
+    final wasSaved = _isSaved;
+    setState(() => _isSaved = !wasSaved);
+    try {
+      if (wasSaved) {
+        await _savedRepo.removeSavedPickupLine(_currentText);
+      } else {
+        await _savedRepo.savePickupLine(
+          text: _currentText,
+          category: widget.pickupLine.category,
+        );
+      }
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            _isSaved ? 'Pickup line saved' : 'Removed from saved',
+          ),
+          duration: const Duration(seconds: 1),
         ),
-      ),
-    );
+      );
+    } catch (e) {
+      debugPrint('[SAVE] Failed to toggle saved pickup line: $e');
+      if (!mounted) return;
+      setState(() => _isSaved = wasSaved);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Unable to save pickup line'),
+          duration: Duration(seconds: 1),
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final gradient = _gradientForCategory(widget.pickupLine.category);
 
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(26),
-        border: Border.all(color: const Color(0xFFE8E8E8)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 14,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            height: 245,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              gradient: gradient,
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(26),
-              ),
+    return RepaintBoundary(
+      key: _cardKey,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(26),
+          border: Border.all(color: const Color(0xFFE8E8E8)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 14,
+              offset: const Offset(0, 8),
             ),
-            child: Stack(
-              children: [
-                Positioned(
-                  left: 18,
-                  top: 16,
-                  child: Icon(
-                    Icons.format_quote_rounded,
-                    color: Colors.white.withValues(alpha: 0.95),
-                    size: 40,
-                  ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              height: 245,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                gradient: gradient,
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(26),
                 ),
-                Positioned(
-                  right: 12,
-                  top: 12,
-                  child: IconButton(
-                    onPressed: _toggleFavorite,
-                    icon: Icon(
-                      _isFavorite ? Icons.favorite : Icons.favorite_border,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 30),
-                    child: Text(
-                      _currentText,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 17,
-                        fontWeight: FontWeight.w700,
-                        height: 1.45,
-                      ),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  right: 18,
-                  bottom: 16,
-                  child: Transform.rotate(
-                    angle: 3.14159,
+              ),
+              child: Stack(
+                children: [
+                  Positioned(
+                    left: 18,
+                    top: 16,
                     child: Icon(
                       Icons.format_quote_rounded,
                       color: Colors.white.withValues(alpha: 0.95),
                       size: 40,
                     ),
                   ),
-                ),
-              ],
+                  Positioned(
+                    right: 12,
+                    top: 12,
+                    child: IconButton(
+                      onPressed: _toggleFavorite,
+                      icon: Icon(
+                        _isFavorite ? Icons.favorite : Icons.favorite_border,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 30),
+                      child: Text(
+                        _currentText,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 17,
+                          fontWeight: FontWeight.w700,
+                          height: 1.45,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    right: 18,
+                    bottom: 16,
+                    child: Transform.rotate(
+                      angle: 3.14159,
+                      child: Icon(
+                        Icons.format_quote_rounded,
+                        color: Colors.white.withValues(alpha: 0.95),
+                        size: 40,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(14, 14, 14, 16),
-            child: Wrap(
-              spacing: 10,
-              runSpacing: 10,
-              children: [
-                _ActionChip(
-                  icon: Icons.copy_rounded,
-                  label: 'Copy',
-                  onTap: _copyMessage,
-                ),
-                _ActionChip(
-                  icon: Icons.edit_rounded,
-                  label: 'Edit',
-                  onTap: _editMessage,
-                ),
-                _ActionChip(
-                  icon: _isSaved
-                      ? Icons.bookmark
-                      : Icons.bookmark_border_rounded,
-                  label: 'Save',
-                  onTap: _saveMessage,
-                ),
-                _ActionChip(
-                  icon: Icons.share_rounded,
-                  label: 'Share',
-                  onTap: () =>
-                      SharePlus.instance.share(ShareParams(text: _currentText)),
-                ),
-              ],
+            Padding(
+              padding: const EdgeInsets.fromLTRB(14, 14, 14, 16),
+              child: Wrap(
+                spacing: 10,
+                runSpacing: 10,
+                children: [
+                  _ActionChip(
+                    icon: Icons.copy_rounded,
+                    label: 'Copy',
+                    onTap: _copyMessage,
+                  ),
+                  _ActionChip(
+                    icon: Icons.edit_rounded,
+                    label: 'Edit',
+                    onTap: _editMessage,
+                  ),
+                  _ActionChip(
+                    icon: _isSaved
+                        ? Icons.bookmark
+                        : Icons.bookmark_border_rounded,
+                    label: 'Save',
+                    onTap: _saveMessage,
+                  ),
+                  GestureDetector(
+                    onTapDown: (details) {
+                      showPickupLineShareMenu(
+                        context: context,
+                        cardKey: _cardKey,
+                        pickupLineText: _currentText,
+                        tapPosition: details.globalPosition,
+                      );
+                    },
+                    child: _ActionChip(
+                      icon: Icons.share_rounded,
+                      label: 'Share',
+                      onTap: () {},
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

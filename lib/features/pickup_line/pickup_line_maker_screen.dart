@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../core/constants/line_text_maker_widget/pickup_line_preview_widget.dart';
+import '../../core/widgets/exit_confirmation_dialog.dart';
 
 class PickupLineMakerScreen extends StatefulWidget {
   const PickupLineMakerScreen({super.key, this.initialText});
@@ -1506,6 +1507,16 @@ class _PickupLineMakerScreenState extends State<PickupLineMakerScreen> {
     }
   }
 
+  Future<void> _handleExit() async {
+    final shouldExit = await showExitConfirmationDialog(
+      context: context,
+      screenName: 'Pickup Line Maker',
+    );
+    if (shouldExit && mounted) {
+      Navigator.pop(context);
+    }
+  }
+
   // ============================================================
   //  Dispose
   // ============================================================
@@ -1520,9 +1531,19 @@ class _PickupLineMakerScreenState extends State<PickupLineMakerScreen> {
   // ============================================================
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Pickup Line Maker"),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        _handleExit();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: _handleExit,
+          ),
+          title: const Text("Pickup Line Maker"),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 10),
@@ -1655,6 +1676,7 @@ class _PickupLineMakerScreenState extends State<PickupLineMakerScreen> {
           ],
         ),
       ),
+    ),
     );
   }
 }

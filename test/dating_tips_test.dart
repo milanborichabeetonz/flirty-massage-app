@@ -16,6 +16,10 @@ void main() {
   setUp(() {
     SharedPreferences.setMockInitialValues({});
     Get.reset();
+    // rootBundle caches loadString futures for the whole isolate. A future
+    // completed inside one test's zone never resolves under another test's
+    // FakeAsync clocks, so clear the cache before every test.
+    rootBundle.clear();
   });
 
   group('Dating Tips JSON & Service validation', () {

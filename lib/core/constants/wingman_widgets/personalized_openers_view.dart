@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../features/ai_wingman/saved_personalized_chats_screen.dart';
 import 'opener_chat_screen.dart';
 
 class PersonalizedOpenersView extends StatefulWidget {
@@ -123,6 +124,31 @@ class _PersonalizedOpenersViewState extends State<PersonalizedOpenersView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // ── Saved Chats Header Button ──────────────────────────────
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const SavedPersonalizedChatsScreen(),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.bookmark_rounded, size: 18, color: _purple),
+                label: const Text(
+                  'Saved Chats',
+                  style: TextStyle(
+                    color: _purple,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 4),
+
             _buildNameCard(),
             const SizedBox(height: 16),
             _buildInterestsCard(),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../network/data/pickup_line_local_data.dart';
 import '../../network/models/pickup_line_model.dart';
 
 class CategorySummary {
@@ -53,6 +54,19 @@ List<CategorySummary> buildCategorySummaries(
   categories.sort(
     (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
   );
+
+  // Always append the Random category as the last item with distinct styling
+  categories.add(
+    const CategorySummary(
+      name: PickupLineLocalData.kRandom,
+      displayName: '${PickupLineLocalData.kRandom} Lines',
+      itemCount: 999,
+      backgroundColor: Color(0xFFFFF8EC),
+      accentColor: Color(0xFFF59E0B),
+      icon: Icons.casino_outlined,
+    ),
+  );
+
   return categories;
 }
 
@@ -205,6 +219,12 @@ _CategoryPalette _paletteForCategory(String normalizedCategory) {
         backgroundColor: Color(0xFFEFF3FF),
         accentColor: Color(0xFF4A72E3),
         icon: Icons.psychology_outlined,
+      );
+    case 'random':
+      return const _CategoryPalette(
+        backgroundColor: Color(0xFFFFF8EC),
+        accentColor: Color(0xFFF59E0B),
+        icon: Icons.casino_outlined,
       );
     default:
       final palettes = <_CategoryPalette>[

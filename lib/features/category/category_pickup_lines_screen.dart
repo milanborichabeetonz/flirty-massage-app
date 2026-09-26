@@ -4,6 +4,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../core/controllers/favorite_controller.dart';
 import '../../core/network/services/craft_message_service.dart';
+import '../../core/services/pickup_line_share_service.dart';
 import '../../core/widgets/costume_text/costume_text_widget.dart';
 import '../pickup_line/pickup_line_maker_screen.dart';
 
@@ -302,6 +303,7 @@ class _AIPickupLineCard extends StatefulWidget {
 }
 
 class _AIPickupLineCardState extends State<_AIPickupLineCard> {
+  final GlobalKey _cardKey = GlobalKey();
   bool _isFavorite = false;
   bool _isSaved = false;
 
@@ -313,126 +315,139 @@ class _AIPickupLineCardState extends State<_AIPickupLineCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(26),
-        border: Border.all(color: const Color(0xFFE8E8E8)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 14,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Gradient top card
-          Container(
-            height: 200,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: widget.gradientColors,
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(26),
-              ),
+    return RepaintBoundary(
+      key: _cardKey,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(26),
+          border: Border.all(color: const Color(0xFFE8E8E8)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 14,
+              offset: const Offset(0, 8),
             ),
-            child: Stack(
-              children: [
-                // Quote open
-                Positioned(
-                  left: 18,
-                  top: 16,
-                  child: Icon(
-                    Icons.format_quote_rounded,
-                    color: Colors.white.withValues(alpha: 0.95),
-                    size: 40,
-                  ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Gradient top card
+            Container(
+              height: 200,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: widget.gradientColors,
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
-                // Favorite
-                Positioned(
-                  right: 12,
-                  top: 12,
-                  child: IconButton(
-                    onPressed: () {
-                      FavoriteController.to.toggleFavorite(widget.text);
-                      setState(() {
-                        _isFavorite = FavoriteController.to.isFavorite(widget.text);
-                      });
-                    },
-                    icon: Icon(
-                      _isFavorite ? Icons.favorite : Icons.favorite_border,
-                      color: Colors.white,
-                    ),
-                  ),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(26),
                 ),
-                // Text
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 30),
-                    child: Text(
-                      widget.text,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 17,
-                        fontWeight: FontWeight.w700,
-                        height: 1.45,
-                      ),
-                    ),
-                  ),
-                ),
-                // Quote close
-                Positioned(
-                  right: 18,
-                  bottom: 16,
-                  child: Transform.rotate(
-                    angle: 3.14159,
+              ),
+              child: Stack(
+                children: [
+                  // Quote open
+                  Positioned(
+                    left: 18,
+                    top: 16,
                     child: Icon(
                       Icons.format_quote_rounded,
                       color: Colors.white.withValues(alpha: 0.95),
                       size: 40,
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
-          // Actions
-          Padding(
-            padding: const EdgeInsets.fromLTRB(14, 14, 14, 16),
-            child: Wrap(
-              spacing: 10,
-              runSpacing: 10,
-              children: [
-                _chip(Icons.copy_rounded, 'Copy', widget.onCopy),
-                _chip(Icons.edit_rounded, 'Edit', widget.onEdit),
-                _chip(
-                  _isSaved ? Icons.bookmark : Icons.bookmark_border_rounded,
-                  'Save',
-                  () {
-                    setState(() => _isSaved = !_isSaved);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          _isSaved ? 'Saved!' : 'Removed from saved.',
-                        ),
-                        duration: const Duration(seconds: 1),
+                  // Favorite
+                  Positioned(
+                    right: 12,
+                    top: 12,
+                    child: IconButton(
+                      onPressed: () {
+                        FavoriteController.to.toggleFavorite(widget.text);
+                        setState(() {
+                          _isFavorite = FavoriteController.to.isFavorite(widget.text);
+                        });
+                      },
+                      icon: Icon(
+                        _isFavorite ? Icons.favorite : Icons.favorite_border,
+                        color: Colors.white,
                       ),
-                    );
-                  },
-                ),
-                _chip(Icons.share_rounded, 'Share', widget.onShare),
-              ],
+                    ),
+                  ),
+                  // Text
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 30),
+                      child: Text(
+                        widget.text,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 17,
+                          fontWeight: FontWeight.w700,
+                          height: 1.45,
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Quote close
+                  Positioned(
+                    right: 18,
+                    bottom: 16,
+                    child: Transform.rotate(
+                      angle: 3.14159,
+                      child: Icon(
+                        Icons.format_quote_rounded,
+                        color: Colors.white.withValues(alpha: 0.95),
+                        size: 40,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+            // Actions
+            Padding(
+              padding: const EdgeInsets.fromLTRB(14, 14, 14, 16),
+              child: Wrap(
+                spacing: 10,
+                runSpacing: 10,
+                children: [
+                  _chip(Icons.copy_rounded, 'Copy', widget.onCopy),
+                  _chip(Icons.edit_rounded, 'Edit', widget.onEdit),
+                  _chip(
+                    _isSaved ? Icons.bookmark : Icons.bookmark_border_rounded,
+                    'Save',
+                    () {
+                      setState(() => _isSaved = !_isSaved);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            _isSaved ? 'Saved!' : 'Removed from saved.',
+                          ),
+                          duration: const Duration(seconds: 1),
+                        ),
+                      );
+                    },
+                  ),
+                  GestureDetector(
+                    onTapDown: (details) {
+                      showPickupLineShareMenu(
+                        context: context,
+                        cardKey: _cardKey,
+                        pickupLineText: widget.text,
+                        tapPosition: details.globalPosition,
+                      );
+                    },
+                    child: _chip(Icons.share_rounded, 'Share', () {}),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
