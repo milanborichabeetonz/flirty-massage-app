@@ -1,11 +1,11 @@
-import 'package:flirtymessages/core/widgets/costume_text/costume_text_widget.dart';
 import 'package:flutter/material.dart';
 
-class EditTextBottonWidget extends StatefulWidget {
+class EditTextBottonWidget extends StatelessWidget {
   final String text;
   final IconData icon;
   final VoidCallback? onTap;
   final bool isSelected;
+
   const EditTextBottonWidget({
     super.key,
     required this.icon,
@@ -15,55 +15,62 @@ class EditTextBottonWidget extends StatefulWidget {
   });
 
   @override
-  State<EditTextBottonWidget> createState() => _EditTextBottonWidgetState();
-}
-
-class _EditTextBottonWidgetState extends State<EditTextBottonWidget> {
-  @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: widget.onTap,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
+    final activeColor =
+        isSelected ? const Color(0xFF7C3AED) : const Color(0xFF374151);
+    final bgColor = isSelected
+        ? const Color(0xFF7C3AED).withValues(alpha: 0.08)
+        : Colors.white;
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
         child: Container(
+          width: 76,
+          height: 72,
+          margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
           decoration: BoxDecoration(
-            color: widget.isSelected ? Colors.pink.shade50 : Colors.white,
-            borderRadius: BorderRadius.circular(15),
+            color: bgColor,
+            borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              width: 2,
-              color: widget.isSelected ? Colors.pink : Colors.grey.shade300,
+              width: isSelected ? 2 : 1,
+              color: isSelected
+                  ? const Color(0xFF7C3AED)
+                  : const Color(0xFFE5E7EB),
             ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.04),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(5.0),
-            child: SizedBox(
-              height: 100,
-              width: 120,
-              child: Card(
-                elevation: 5,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Icon(
-                        widget.icon,
-                        color: widget.isSelected ? Colors.pink : Colors.black,
-                        size: 28,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: CostumeTextWidget(
-                        text: widget.text,
-                        color: Colors.black,
-                        size: 15,
-                      ),
-                    ),
-                  ],
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                color: activeColor,
+                size: 24,
+              ),
+              const SizedBox(height: 4),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: Text(
+                  text,
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                    color: activeColor,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-            ),
+            ],
           ),
         ),
       ),

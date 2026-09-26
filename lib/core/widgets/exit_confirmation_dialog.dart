@@ -54,7 +54,7 @@ class ExitConfirmationDialog extends StatelessWidget {
                   width: 64,
                   height: 64,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => const Icon(
+                  errorBuilder: (context, error, stackTrace) => const Icon(
                     Icons.favorite_rounded,
                     color: _purple,
                     size: 36,

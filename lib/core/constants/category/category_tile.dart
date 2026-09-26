@@ -77,12 +77,14 @@ class CategoryTile extends StatelessWidget {
     required this.onTap,
     this.width,
     this.height,
+    this.showCount = true,
   });
 
   final CategorySummary category;
   final VoidCallback onTap;
   final double? width;
   final double? height;
+  final bool showCount;
 
   @override
   Widget build(BuildContext context) {
@@ -119,6 +121,7 @@ class CategoryTile extends StatelessWidget {
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
                     category.displayName,
@@ -130,15 +133,17 @@ class CategoryTile extends StatelessWidget {
                       color: Color(0xFF222222),
                     ),
                   ),
-                  const SizedBox(height: 2),
-                  Text(
-                    '${category.itemCount} lines',
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w500,
-                      color: category.accentColor,
+                  if (showCount) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      '${category.itemCount} lines',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
+                        color: category.accentColor,
+                      ),
                     ),
-                  ),
+                  ],
                 ],
               ),
             ],

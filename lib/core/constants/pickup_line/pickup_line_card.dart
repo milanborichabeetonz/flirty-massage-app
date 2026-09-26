@@ -167,123 +167,124 @@ class _PickupLineCarouselCardState extends State<_PickupLineCarouselCard> {
   Widget build(BuildContext context) {
     final gradient = _gradientForCategory(widget.pickupLine.category);
 
-    return RepaintBoundary(
-      key: _cardKey,
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: gradient,
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.12),
-              blurRadius: 16,
-              offset: const Offset(0, 8),
-            ),
-          ],
-        ),
-        child: Stack(
-          children: [
-            Positioned(
-              left: 16,
-              top: 12,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 0.22),
-                  borderRadius: BorderRadius.circular(30),
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        RepaintBoundary(
+          key: _cardKey,
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: gradient,
+              borderRadius: BorderRadius.circular(24),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.12),
+                  blurRadius: 16,
+                  offset: const Offset(0, 8),
                 ),
-                child: const Text(
-                  'Pickup Line of the Day',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 11,
+              ],
+            ),
+            child: Stack(
+              children: [
+                Positioned(
+                  left: 18,
+                  top: 48,
+                  child: Icon(
+                    Icons.format_quote_rounded,
+                    color: Colors.white.withValues(alpha: 0.92),
+                    size: 34,
                   ),
                 ),
-              ),
-            ),
-            Positioned(
-              left: 18,
-              top: 48,
-              child: Icon(
-                Icons.format_quote_rounded,
-                color: Colors.white.withValues(alpha: 0.92),
-                size: 34,
-              ),
-            ),
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 40),
-                child: Text(
-                  widget.pickupLine.text,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    height: 1.4,
-                  ),
-                ),
-              ),
-            ),
-            Positioned(
-              right: 10,
-              bottom: 6,
-              child: Row(
-                children: [
-                  HeaderIconButton(
-                    icon: _isFavorite
-                        ? Icons.favorite
-                        : Icons.favorite_border,
-                    onPressed: _toggleFavorite,
-                    iconColor: Colors.white,
-                    iconSize: 24,
-                  ),
-                  HeaderIconButton(
-                    icon: _isSaved
-                        ? Icons.bookmark
-                        : Icons.bookmark_border_rounded,
-                    onPressed: _toggleSaved,
-                    iconColor: Colors.white,
-                    iconSize: 24,
-                  ),
-                  HeaderIconButton(
-                    icon: Icons.mode_edit_outlined,
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => PickupLineMakerScreen(
-                            initialText: widget.pickupLine.text,
-                          ),
-                        ),
-                      );
-                    },
-                    iconColor: Colors.white,
-                    iconSize: 24,
-                  ),
-                  GestureDetector(
-                    onTapDown: (details) {
-                      showPickupLineShareMenu(
-                        context: context,
-                        cardKey: _cardKey,
-                        pickupLineText: widget.pickupLine.text,
-                        tapPosition: details.globalPosition,
-                      );
-                    },
-                    child: HeaderIconButton(
-                      icon: Icons.share_outlined,
-                      onPressed: () {},
-                      iconColor: Colors.white,
-                      iconSize: 24,
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 40),
+                    child: Text(
+                      widget.pickupLine.text,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        height: 1.4,
+                      ),
                     ),
                   ),
-                ],
+                ),
+              ],
+            ),
+          ),
+        ),
+        Positioned(
+          left: 16,
+          top: 12,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.22),
+              borderRadius: BorderRadius.circular(30),
+            ),
+            child: const Text(
+              'Pickup Line of the Day',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+                fontSize: 11,
               ),
             ),
-          ],
+          ),
         ),
-      ),
+        Positioned(
+          right: 10,
+          bottom: 6,
+          child: Row(
+            children: [
+              HeaderIconButton(
+                icon: _isFavorite ? Icons.favorite : Icons.favorite_border,
+                onPressed: _toggleFavorite,
+                iconColor: Colors.white,
+                iconSize: 24,
+              ),
+              HeaderIconButton(
+                icon: _isSaved ? Icons.bookmark : Icons.bookmark_border_rounded,
+                onPressed: _toggleSaved,
+                iconColor: Colors.white,
+                iconSize: 24,
+              ),
+              HeaderIconButton(
+                icon: Icons.mode_edit_outlined,
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => PickupLineMakerScreen(
+                        initialText: widget.pickupLine.text,
+                      ),
+                    ),
+                  );
+                },
+                iconColor: Colors.white,
+                iconSize: 24,
+              ),
+              GestureDetector(
+                onTapDown: (details) {
+                  showPickupLineShareMenu(
+                    context: context,
+                    cardKey: _cardKey,
+                    pickupLineText: widget.pickupLine.text,
+                    tapPosition: details.globalPosition,
+                  );
+                },
+                child: HeaderIconButton(
+                  icon: Icons.share_outlined,
+                  onPressed: () {},
+                  iconColor: Colors.white,
+                  iconSize: 24,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
@@ -310,6 +311,16 @@ class _PickupLineListCardState extends State<_PickupLineListCard> {
     _currentText = widget.pickupLine.text;
     _isFavorite = FavoriteController.to.isFavorite(widget.pickupLine.text);
     _checkSavedStatus();
+  }
+
+  @override
+  void didUpdateWidget(covariant _PickupLineListCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.pickupLine.text != widget.pickupLine.text) {
+      _currentText = widget.pickupLine.text;
+      _isFavorite = FavoriteController.to.isFavorite(widget.pickupLine.text);
+      _checkSavedStatus();
+    }
   }
 
   Future<void> _checkSavedStatus() async {
@@ -387,25 +398,25 @@ class _PickupLineListCardState extends State<_PickupLineListCard> {
   Widget build(BuildContext context) {
     final gradient = _gradientForCategory(widget.pickupLine.category);
 
-    return RepaintBoundary(
-      key: _cardKey,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(26),
-          border: Border.all(color: const Color(0xFFE8E8E8)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 14,
-              offset: const Offset(0, 8),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(26),
+        border: Border.all(color: const Color(0xFFE8E8E8)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 14,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          RepaintBoundary(
+            key: _cardKey,
+            child: Container(
               height: 245,
               width: double.infinity,
               decoration: BoxDecoration(
@@ -466,49 +477,47 @@ class _PickupLineListCardState extends State<_PickupLineListCard> {
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(14, 14, 14, 16),
-              child: Wrap(
-                spacing: 10,
-                runSpacing: 10,
-                children: [
-                  _ActionChip(
-                    icon: Icons.copy_rounded,
-                    label: 'Copy',
-                    onTap: _copyMessage,
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(14, 14, 14, 16),
+            child: Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              children: [
+                _ActionChip(
+                  icon: Icons.copy_rounded,
+                  label: 'Copy',
+                  onTap: _copyMessage,
+                ),
+                _ActionChip(
+                  icon: Icons.edit_rounded,
+                  label: 'Edit',
+                  onTap: _editMessage,
+                ),
+                _ActionChip(
+                  icon: _isSaved ? Icons.bookmark : Icons.bookmark_border_rounded,
+                  label: 'Save',
+                  onTap: _saveMessage,
+                ),
+                GestureDetector(
+                  onTapDown: (details) {
+                    showPickupLineShareMenu(
+                      context: context,
+                      cardKey: _cardKey,
+                      pickupLineText: _currentText,
+                      tapPosition: details.globalPosition,
+                    );
+                  },
+                  child: _ActionChip(
+                    icon: Icons.share_rounded,
+                    label: 'Share',
+                    onTap: () {},
                   ),
-                  _ActionChip(
-                    icon: Icons.edit_rounded,
-                    label: 'Edit',
-                    onTap: _editMessage,
-                  ),
-                  _ActionChip(
-                    icon: _isSaved
-                        ? Icons.bookmark
-                        : Icons.bookmark_border_rounded,
-                    label: 'Save',
-                    onTap: _saveMessage,
-                  ),
-                  GestureDetector(
-                    onTapDown: (details) {
-                      showPickupLineShareMenu(
-                        context: context,
-                        cardKey: _cardKey,
-                        pickupLineText: _currentText,
-                        tapPosition: details.globalPosition,
-                      );
-                    },
-                    child: _ActionChip(
-                      icon: Icons.share_rounded,
-                      label: 'Share',
-                      onTap: () {},
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

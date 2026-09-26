@@ -137,7 +137,7 @@ class _SavedPersonalizedChatsScreenState
               : ListView.separated(
                   padding: const EdgeInsets.all(16),
                   itemCount: _savedChats.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 12),
+                  separatorBuilder: (context, index) => const SizedBox(height: 12),
                   itemBuilder: (context, index) {
                     final chat = _savedChats[index];
                     final snippet = _getPreviewSnippet(chat.chatHistory);

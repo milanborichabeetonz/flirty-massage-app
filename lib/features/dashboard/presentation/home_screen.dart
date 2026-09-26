@@ -67,9 +67,18 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF9FAFB),
       appBar: AppBar(
-        backgroundColor: Colors.lightBlueAccent,
-        title: const Text("pickup lines"),
+        backgroundColor: const Color(0xFF7C3AED),
+        elevation: 0,
+        title: const Text(
+          "Pickup Lines",
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
         actions: [
           Row(
             children: [
@@ -102,14 +111,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
                 iconColor: Colors.white,
               ),
-              const SizedBox(width: 20),
+              const SizedBox(width: 14),
             ],
           ),
         ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(10),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -119,46 +128,41 @@ class _HomeScreenState extends State<HomeScreen> {
                 width: double.infinity,
                 child: PickupLineCard(), // pickup line
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 14),
 
               //------------------------------------------ AiWingmanCard -------------------------------------------------------
               const SizedBox(
-                height: 150,
+                height: 140,
                 width: double.infinity,
                 child: AiWingmanCard(),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 14),
 
               //---------------------------------------------- Quick use --------------------------------------------
-              Container(
-                height: 150,
+              const SizedBox(
                 width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: const QuickUseButton(),
+                child: QuickUseButton(),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 14),
 
               //-------------------------------------------------------- Category -------------------------------------------
-              SizedBox(
-                width: double.infinity,
-                height: 40,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const CostumeTextWidget(
-                      text: 'Category',
-                      color: Colors.black,
-                      size: 20,
-                    ),
-                    IconButton(
-                      onPressed: _openCategorySearch,
-                      icon: const Icon(Icons.search_rounded),
-                    ),
-                  ],
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const CostumeTextWidget(
+                    text: 'Categories',
+                    color: Color(0xFF1F2937),
+                    size: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  IconButton(
+                    onPressed: _openCategorySearch,
+                    icon: const Icon(Icons.search_rounded, color: Color(0xFF4B5563)),
+                    tooltip: 'Search Categories',
+                  ),
+                ],
               ),
+              const SizedBox(height: 6),
 
               // --------------------------------------  show all category ------------------------------------
               FutureBuilder<List<PickupLineModel>>(
@@ -167,7 +171,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const SizedBox(
                       height: 110,
-                      child: Center(child: CircularProgressIndicator()),
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.5,
+                          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF7C3AED)),
+                        ),
+                      ),
                     );
                   }
 
@@ -178,9 +187,16 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Text('Unable to load categories.'),
+                            const Text(
+                              'Unable to load categories.',
+                              style: TextStyle(color: Color(0xFF6B7280), fontSize: 13),
+                            ),
                             const SizedBox(height: 6),
                             ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF7C3AED),
+                                foregroundColor: Colors.white,
+                              ),
                               onPressed: () {
                                 setState(() {
                                   _pickupLinesFuture = _pickupLineService
@@ -200,18 +216,23 @@ class _HomeScreenState extends State<HomeScreen> {
                   return AllCategoryTabs(pickupLines: pickupLines);
                 },
               ),
+              const SizedBox(height: 24),
             ],
           ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: const Color(0xFF7C3AED),
+        foregroundColor: Colors.white,
+        tooltip: 'Pickup Line Maker',
+        elevation: 4,
         onPressed: () {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const PickupLineMakerScreen()),
           );
         },
-        child: const Icon(Icons.edit_note),
+        child: const Icon(Icons.edit_note, size: 28),
       ),
     );
   }

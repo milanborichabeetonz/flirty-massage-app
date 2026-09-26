@@ -315,26 +315,26 @@ class _AIPickupLineCardState extends State<_AIPickupLineCard> {
 
   @override
   Widget build(BuildContext context) {
-    return RepaintBoundary(
-      key: _cardKey,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(26),
-          border: Border.all(color: const Color(0xFFE8E8E8)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 14,
-              offset: const Offset(0, 8),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Gradient top card
-            Container(
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(26),
+        border: Border.all(color: const Color(0xFFE8E8E8)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 14,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Gradient top card
+          RepaintBoundary(
+            key: _cardKey,
+            child: Container(
               height: 200,
               width: double.infinity,
               decoration: BoxDecoration(
@@ -408,46 +408,46 @@ class _AIPickupLineCardState extends State<_AIPickupLineCard> {
                 ],
               ),
             ),
-            // Actions
-            Padding(
-              padding: const EdgeInsets.fromLTRB(14, 14, 14, 16),
-              child: Wrap(
-                spacing: 10,
-                runSpacing: 10,
-                children: [
-                  _chip(Icons.copy_rounded, 'Copy', widget.onCopy),
-                  _chip(Icons.edit_rounded, 'Edit', widget.onEdit),
-                  _chip(
-                    _isSaved ? Icons.bookmark : Icons.bookmark_border_rounded,
-                    'Save',
-                    () {
-                      setState(() => _isSaved = !_isSaved);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            _isSaved ? 'Saved!' : 'Removed from saved.',
-                          ),
-                          duration: const Duration(seconds: 1),
+          ),
+          // Actions
+          Padding(
+            padding: const EdgeInsets.fromLTRB(14, 14, 14, 16),
+            child: Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              children: [
+                _chip(Icons.copy_rounded, 'Copy', widget.onCopy),
+                _chip(Icons.edit_rounded, 'Edit', widget.onEdit),
+                _chip(
+                  _isSaved ? Icons.bookmark : Icons.bookmark_border_rounded,
+                  'Save',
+                  () {
+                    setState(() => _isSaved = !_isSaved);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          _isSaved ? 'Saved!' : 'Removed from saved.',
                         ),
-                      );
-                    },
-                  ),
-                  GestureDetector(
-                    onTapDown: (details) {
-                      showPickupLineShareMenu(
-                        context: context,
-                        cardKey: _cardKey,
-                        pickupLineText: widget.text,
-                        tapPosition: details.globalPosition,
-                      );
-                    },
-                    child: _chip(Icons.share_rounded, 'Share', () {}),
-                  ),
-                ],
-              ),
+                        duration: const Duration(seconds: 1),
+                      ),
+                    );
+                  },
+                ),
+                GestureDetector(
+                  onTapDown: (details) {
+                    showPickupLineShareMenu(
+                      context: context,
+                      cardKey: _cardKey,
+                      pickupLineText: widget.text,
+                      tapPosition: details.globalPosition,
+                    );
+                  },
+                  child: _chip(Icons.share_rounded, 'Share', () {}),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -77,6 +77,7 @@ class _AllCategoryTabsState extends State<AllCategoryTabs> {
             category: category,
             width: 135,
             height: 105,
+            showCount: false,
             onTap: () => _openCategory(context, category.name),
           );
         },

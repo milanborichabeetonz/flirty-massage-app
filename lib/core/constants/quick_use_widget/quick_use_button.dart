@@ -9,84 +9,94 @@ class QuickUseButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        height: 100,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: Colors.pinkAccent.withValues(alpha: 0.5),
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child: Row(
-          children: [
-            // ------------------------------------ Dating Tips ----------------------------------
-            Expanded(
-              child: CostumeCardWidget(
-                color: Colors.pinkAccent.withValues(alpha: 0.4),
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const DatingTipsScreen(),
-                  ),
-                ),
-                child: Column(
-                  children: [
-                    CostumeTextWidget(
-                      text: ' Dating Tips',
-                      color: Colors.black,
-                      size: 12,
-                    ),
-                    const SizedBox(height: 15),
-                    Row(
-                      children: [
-                        CostumeTextWidget(
-                          text: ' Improve your \nlove game',
-                          color: Colors.black,
-                          size: 12,
-                        ),
-                        const SizedBox(width: 40),
-                        const Icon(Icons.chevron_right),
-                      ],
-                    ),
-                  ],
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        children: [
+          // ------------------------------------ Dating Tips ----------------------------------
+          Expanded(
+            child: CostumeCardWidget(
+              elevation: 0,
+              color: const Color(0xFFFFF0F5),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const DatingTipsScreen(),
                 ),
               ),
-            ),
-            // -------------------------------------- Love Tester -----------------------------------
-            Expanded(
-              child: CostumeCardWidget(
-                color: Colors.blueAccent.withValues(alpha: 0.4),
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const LoveTesterScreen(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const CostumeTextWidget(
+                    text: 'Dating Tips',
+                    color: Color(0xFFE84393),
+                    size: 14,
+                    fontWeight: FontWeight.bold,
                   ),
-                ),
-                child: Column(
-                  children: [
-                    CostumeTextWidget(
-                      text: 'Love Tester',
-                      color: Colors.black,
-                      size: 12,
-                    ),
-                    const SizedBox(height: 15),
-                    Row(
-                      children: [
-                        CostumeTextWidget(
-                          text: ' check your \n compatibility',
-                          color: Colors.black,
-                          size: 12,
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: const [
+                      Expanded(
+                        child: CostumeTextWidget(
+                          text: 'Improve your\nlove game',
+                          color: Color(0xFF4A4A4A),
+                          size: 11,
                         ),
-                        const SizedBox(width: 40),
-                        const Icon(Icons.chevron_right),
-                      ],
-                    ),
-                  ],
-                ),
+                      ),
+                      Icon(Icons.chevron_right, color: Color(0xFFE84393)),
+                    ],
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+          const SizedBox(width: 10),
+          // -------------------------------------- Love Tester -----------------------------------
+          Expanded(
+            child: CostumeCardWidget(
+              elevation: 0,
+              color: const Color(0xFFF0F4FF),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const LoveTesterScreen(),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const CostumeTextWidget(
+                    text: 'Love Tester',
+                    color: Color(0xFF3B82F6),
+                    size: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: const [
+                      Expanded(
+                        child: CostumeTextWidget(
+                          text: 'Check your\ncompatibility',
+                          color: Color(0xFF4A4A4A),
+                          size: 11,
+                        ),
+                      ),
+                      Icon(Icons.chevron_right, color: Color(0xFF3B82F6)),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

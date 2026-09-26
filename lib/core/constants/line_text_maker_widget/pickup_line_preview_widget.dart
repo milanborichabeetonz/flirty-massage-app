@@ -29,19 +29,19 @@ class PickupLinePreviewWidget extends StatelessWidget {
   // Opacity support
   final double backgroundOpacity;
 
-  // New: independent padding (replaces contentPadding)
+  // Inner content padding
   final EdgeInsets previewPadding;
 
-  // New: background image support
+  // Background image support
   final File? galleryImage;
   final String? presetImagePath;
 
   const PickupLinePreviewWidget({
     super.key,
     this.backgroundColor = Colors.white,
-    this.fontSize = 25,
-    this.latterSpacing = 1.0,
-    this.lineHeight = 0,
+    this.fontSize = 24,
+    this.latterSpacing = 0.0,
+    this.lineHeight = 0.0,
     this.fontFamily = 'Roboto',
     this.textColor = Colors.black,
     this.fontWeight = FontWeight.normal,
@@ -71,7 +71,7 @@ class PickupLinePreviewWidget extends StatelessWidget {
         fit: BoxFit.cover,
       );
     }
-    if (presetImagePath != null) {
+    if (presetImagePath != null && presetImagePath!.isNotEmpty) {
       return DecorationImage(
         image: AssetImage(presetImagePath!),
         fit: BoxFit.cover,
@@ -85,103 +85,114 @@ class PickupLinePreviewWidget extends StatelessWidget {
     if (image != null) {
       return BoxDecoration(
         image: image,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
       );
     }
     if (gradientBackground != null) {
       return BoxDecoration(
         gradient: gradientBackground,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
       );
     }
     return BoxDecoration(
       color: backgroundColor.withValues(alpha: backgroundOpacity),
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(20),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.08),
+          blurRadius: 16,
+          offset: const Offset(0, 6),
+        ),
+      ],
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final textStyle = TextStyle(
+      fontSize: fontSize,
+      height: lineHeight > 0 ? (1.0 + lineHeight * 0.3) : null,
+      letterSpacing: latterSpacing > 0 ? latterSpacing : null,
+      fontFamily: fontFamily,
+      color: textColor,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      decoration: textDecoration,
+      shadows: hasShadow
+          ? [
+              Shadow(
+                color: shadowColor,
+                blurRadius: shadowBlur,
+                offset: Offset(shadowOffsetX, shadowOffsetY),
+              ),
+            ]
+          : null,
+    );
+
     return Container(
-      width: double.infinity,
-      color: Colors.white,
+      decoration: _resolveDecoration(),
+      clipBehavior: Clip.antiAlias,
       child: Padding(
         padding: previewPadding,
-        child: Container(
-          decoration: _resolveDecoration(),
-          child: Card(
-            color: Colors.transparent,
-            elevation: 0,
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Stack(
-                  children: [
-                    if (hasBorder)
-                      Positioned.fill(
-                        child: IgnorePointer(
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: ValueListenableBuilder(
-                              valueListenable: controller!,
-                              builder: (context, value, _) {
-                                return Text(
-                                  value.text,
-                                  textAlign: textAlign,
-                                  style: TextStyle(
-                                    fontSize: fontSize,
-                                    fontFamily: fontFamily,
-                                    letterSpacing: latterSpacing,
-                                    fontWeight: fontWeight,
-                                    fontStyle: fontStyle,
-                                    foreground: Paint()
-                                      ..style = PaintingStyle.stroke
-                                      ..strokeWidth = borderWidth
-                                      ..color = borderColor,
-                                  ),
-                                );
-                              },
+        child: Center(
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              if (hasBorder && controller != null)
+                Positioned.fill(
+                  child: IgnorePointer(
+                    child: Center(
+                      child: ValueListenableBuilder<TextEditingValue>(
+                        valueListenable: controller!,
+                        builder: (context, value, _) {
+                          return Text(
+                            value.text.isEmpty ? "Type Here..." : value.text,
+                            textAlign: textAlign,
+                            style: textStyle.copyWith(
+                              foreground: Paint()
+                                ..style = PaintingStyle.stroke
+                                ..strokeWidth = borderWidth
+                                ..color = borderColor,
+                              color: null,
                             ),
-                          ),
-                        ),
-                      ),
-                    TextField(
-                      controller: controller,
-                      maxLines: null,
-                      expands: true,
-                      textAlign: textAlign,
-                      textAlignVertical: TextAlignVertical.center,
-                      style: TextStyle(
-                        fontSize: fontSize,
-                        height: lineHeight,
-                        letterSpacing: latterSpacing,
-                        fontFamily: fontFamily,
-                        color: textColor,
-                        fontWeight: fontWeight,
-                        fontStyle: fontStyle,
-                        decoration: textDecoration,
-                        shadows: hasShadow
-                            ? [
-                                Shadow(
-                                  color: shadowColor,
-                                  blurRadius: shadowBlur,
-                                  offset: Offset(shadowOffsetX, shadowOffsetY),
-                                ),
-                              ]
-                            : [],
-                      ),
-                      decoration: const InputDecoration(
-                        hintText: "Type Here...",
-                        hintStyle: TextStyle(fontSize: 20),
-                        border: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        focusedBorder: InputBorder.none,
+                          );
+                        },
                       ),
                     ),
-                  ],
+                  ),
+                ),
+              TextField(
+                controller: controller,
+                maxLines: null,
+                textAlign: textAlign,
+                textAlignVertical: TextAlignVertical.center,
+                style: textStyle,
+                cursorColor: textColor,
+                decoration: const InputDecoration(
+                  hintText: "Type Here...",
+                  hintStyle: TextStyle(fontSize: 20, color: Colors.black38),
+                  border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  isDense: true,
+                  contentPadding: EdgeInsets.zero,
                 ),
               ),
-            ),
+            ],
           ),
         ),
       ),
